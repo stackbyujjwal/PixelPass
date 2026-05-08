@@ -964,7 +964,7 @@ aiEnhanceBtn.addEventListener('click', () => {
 });
 
 removeBGBtn.addEventListener('click', async () => {
-    const apiKey = "tMh4m4Tfn23vMpRXCkJyo92y"; 
+    const apiKey = "AMzmgcZFBu9QrV4uVBSfHLgT"; 
     const file = imageInput.files[0];
     if(!file) return showToast("Please upload a photo first!", "exclamation-triangle");
     
