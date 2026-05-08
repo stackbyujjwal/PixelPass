@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelPass GOD LEVEL | @StackByUjjwal</title>
+    <title>PixelPass | @StackByUjjwal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -11,13 +11,15 @@
 </head>
 <body data-theme="light">
 
+    <div id="toast-container"></div>
+
     <header class="navbar">
         <div class="logo-area">
             <div class="logo-icon"><i class="fas fa-crown"></i></div>
-            <div class="logo-text">PixelPass <span class="version">GOD MODE</span></div>
+            <div class="logo-text">PixelPass <span class="version">By Ujjwal</span></div>
         </div>
         <div class="header-tools">
-            <button id="downloadBtn" class="btn-primary" style="padding: 8px 16px; margin: 0;"><i class="fas fa-download"></i> Download Photo</button>
+            <button id="downloadBtn" class="btn-primary" style="padding: 8px 16px; margin: 0;"><i class="fas fa-download"></i> Download (S)</button>
             <button id="themeToggle" class="icon-btn" title="Toggle Dark Mode">
                 <i class="fas fa-moon"></i>
             </button>
@@ -25,9 +27,17 @@
     </header>
 
     <div class="app-shell">
+        <main class="workspace">
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <canvas id="editorCanvas"></canvas>
+            </div>
+            <div class="canvas-footer" id="canvasFooterTxt">
+                <span class="res-tag"><i class="fas fa-keyboard"></i> Use Arrows to Fine-tune | Pinch to Zoom</span>
+            </div>
+        </main>
+
         <aside class="sidebar left-sidebar">
             <div class="scroll-container">
-                
                 <div class="control-card accent-blue">
                     <div class="card-header"><span class="badge">01</span><label>Media Source</label></div>
                     <div class="upload-box" id="dropZone">
@@ -39,13 +49,17 @@
                 </div>
 
                 <div class="control-card accent-purple">
-                    <div class="card-header"><span class="badge">02</span><label>Dimensions & Structure</label></div>
+                    <div class="card-header"><span class="badge">02</span><label>Presets & Structure</label></div>
+                    
+                    <div class="grid-2 mb-10">
+                        <button class="btn-outline-sm preset-btn" data-preset="official">Official ID</button>
+                        <button class="btn-outline-sm preset-btn" data-preset="vibrant">Vibrant</button>
+                    </div>
+
                     <select id="ratioSelect" class="saas-select mb-10">
                         <option value="413x531" selected>3.5 x 4.5 cm (Standard Passport)</option>
-                        <option value="600x600">2.0 x 2.0 inch (US Visa / Passport)</option>
+                        <option value="600x600">2.0 x 2.0 inch (US Visa)</option>
                         <option value="236x295">2.0 x 2.5 cm (Stamp Size)</option>
-                        <option value="295x354">2.5 x 3.0 cm (PAN Card Size)</option>
-                        <option value="354x472">3.0 x 4.0 cm (Driving License)</option>
                         <option value="custom">Custom Dimensions</option>
                     </select>
                     
@@ -60,19 +74,28 @@
                             <input type="number" id="customH" class="saas-select" placeholder="Height">
                         </div>
                     </div>
-                    
+
                     <div class="toggle-row mb-10">
                         <label class="field-label m-0"><i class="fas fa-border-all"></i> Cutting Border</label>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <input type="number" id="borderWidth" value="2" min="0" max="20" class="saas-select" style="width: 60px; padding: 5px;">
-                            <span class="file-info">px</span>
                             <input type="checkbox" id="addBorderToggle" class="toggle-checkbox" checked>
                         </div>
                     </div>
                     
                     <div class="toggle-row mb-10" style="background: #e0e7ff; padding: 8px 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
-                        <label class="field-label m-0" style="color: #4f46e5;"><i class="fas fa-user-circle"></i> Biometric Face Guide</label>
+                        <label class="field-label m-0" style="color: #4f46e5;"><i class="fas fa-user-circle"></i> Biometric Guide</label>
                         <input type="checkbox" id="showGuideToggle" class="toggle-checkbox">
+                    </div>
+
+                    <div class="toggle-row mb-10" style="background: #e0f2fe; padding: 8px 10px; border-radius: 6px; border: 1px solid #bae6fd;">
+                        <label class="field-label m-0" style="color: #0284c7;"><i class="fas fa-th"></i> Rule of Thirds</label>
+                        <input type="checkbox" id="showGridToggle" class="toggle-checkbox">
+                    </div>
+
+                    <div class="toggle-row mb-10" style="background: #ffe4e6; padding: 8px 10px; border-radius: 6px; border: 1px solid #fecdd3;">
+                        <label class="field-label m-0" style="color: #e11d48;"><i class="fas fa-exclamation-triangle"></i> Print Safe Zone</label>
+                        <input type="checkbox" id="safeZoneToggle" class="toggle-checkbox">
                     </div>
 
                     <div class="toggle-row">
@@ -83,25 +106,39 @@
                         <input type="text" id="photoName" class="saas-select" placeholder="Enter Full Name">
                         <input type="text" id="photoDate" class="saas-select" placeholder="DD/MM/YYYY">
                     </div>
+
+                    <div class="toggle-row mt-10">
+                        <label class="field-label m-0"><i class="fas fa-copyright"></i> Add Watermark</label>
+                        <input type="checkbox" id="addWatermarkToggle" class="toggle-checkbox">
+                    </div>
+                    <div id="watermarkInputsWrapper" style="display: none; gap: 10px; flex-direction: column; margin-top: 10px;">
+                        <input type="text" id="watermarkText" class="saas-select" placeholder="Enter Watermark Text">
+                    </div>
                 </div>
 
                 <div class="control-card accent-orange">
-                    <div class="card-header"><span class="badge">03</span><label>Export Settings</label></div>
+                    <div class="card-header"><span class="badge">03</span><label>Export & Est.</label></div>
+                    
+                    <div class="slider-group mb-10">
+                        <div class="slider-label" style="margin-bottom: 6px;">
+                            <span style="color:var(--orange);"><i class="fas fa-compress-arrows-alt"></i> Export Resolution</span>
+                            <span id="resVal" style="font-weight: 800;">1x (Std)</span>
+                        </div>
+                        <input type="range" id="resolutionSlider" class="canva-slider" min="1" max="4" value="1" step="1">
+                    </div>
+
                     <div class="grid-2">
-                        <div>
-                            <label class="field-label">Format</label>
-                            <select id="imgFormat" class="saas-select">
-                                <option value="image/jpeg">JPG</option>
-                                <option value="image/png">PNG</option>
-                            </select>
+                        <select id="imgFormat" class="saas-select">
+                            <option value="image/jpeg">JPG</option>
+                            <option value="image/png">PNG</option>
+                        </select>
+                        <div class="kb-input-group">
+                            <input type="number" id="targetKB" placeholder="KB limit">
+                            <span class="kb-label">KB</span>
                         </div>
-                        <div>
-                            <label class="field-label">Max Size</label>
-                            <div class="kb-input-group">
-                                <input type="number" id="targetKB" placeholder="KB limit">
-                                <span class="kb-label">KB</span>
-                            </div>
-                        </div>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 12px; font-weight: 600; text-align: center; background: var(--bg-main); padding: 8px; border-radius: 6px;">
+                        Live Est. Size: <strong id="liveEstSize" style="color: var(--primary);">0 KB</strong>
                     </div>
                 </div>
 
@@ -114,12 +151,11 @@
                     </select>
                     
                     <div class="toggle-row mb-10">
-                        <label class="field-label m-0"><i class="fas fa-cut"></i> Add Cut Lines (Crop Marks)</label>
+                        <label class="field-label m-0"><i class="fas fa-cut"></i> Add Crop Marks</label>
                         <input type="checkbox" id="printCropMarks" class="toggle-checkbox" checked>
                     </div>
-
                     <button id="openPrintModalBtn" class="btn-primary btn-green mt-10">
-                        <i class="fas fa-print"></i> Layout & Print
+                        <i class="fas fa-print"></i> Layout & Print Sheet
                     </button>
                 </div>
             </div>
@@ -127,36 +163,27 @@
             <div class="brand-footer">
                 <p>Engineered by <strong>@StackByUjjwal</strong></p>
                 <div class="social-icons">
-                    <i class="fab fa-github"></i>
-                    <i class="fab fa-linkedin"></i>
-                    <i class="fab fa-instagram"></i>
+                    <a href="https://github.com/stackbyujjwal" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/stackbyujjwal" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.instagram.com/stackbyujjwal" target="_blank"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </aside>
 
-        <main class="workspace">
-            <div class="canvas-wrapper" id="canvasWrapper">
-                <canvas id="editorCanvas"></canvas>
-            </div>
-            <div class="canvas-footer">
-                <span class="res-tag"><i class="fas fa-expand-arrows-alt"></i> Drag corners to resize | Drag image to move</span>
-            </div>
-        </main>
-
         <aside class="sidebar right-sidebar disabled-panel" id="rightSidebar">
             <div class="panel-header">
-                <div><i class="fas fa-sliders-h"></i> God Mode Editor</div>
+                <div><i class="fas fa-sliders-h"></i> Retouching Tools</div>
             </div>
             
             <div class="scroll-container" style="padding: 0;">
                 <div class="editor-section mt-10">
-                    <label class="section-title"><i class="fas fa-magic"></i> Smart Actions</label>
+                    <label class="section-title"><i class="fas fa-magic"></i> AI Actions</label>
                     <div class="grid-2">
-                        <button id="removeBGBtn" class="btn-outline-sm m-0" title="Remove Background"><i class="fas fa-eraser"></i> Cutout BG</button>
-                        <button id="aiEnhanceBtn" class="btn-outline-sm m-0" title="Auto Adjust Image"><i class="fas fa-wand-magic-sparkles"></i> Auto Adjust</button>
+                        <button id="removeBGBtn" class="btn-outline-sm m-0"><i class="fas fa-eraser"></i> Cutout BG</button>
+                        <button id="aiEnhanceBtn" class="btn-outline-sm m-0"><i class="fas fa-wand-magic-sparkles"></i> Auto Fix</button>
                     </div>
                     <div class="setting-row mt-10">
-                        <span class="field-label m-0">Studio Background Color</span>
+                        <span class="field-label m-0">Background Color</span>
                         <input type="color" id="bgColor" value="#ffffff">
                     </div>
                 </div>
@@ -169,6 +196,10 @@
                         <div class="slider-label"><span>Rotation</span><span id="rotVal">0°</span></div>
                         <input type="range" id="rotation" class="canva-slider" min="-180" max="180" value="0">
                     </div>
+                    <div class="slider-group">
+                        <div class="slider-label"><span>Corner Radius</span><span id="radiusVal">0px</span></div>
+                        <input type="range" id="cornerRadius" class="canva-slider" min="0" max="100" value="0">
+                    </div>
                     <div class="grid-2 mt-10">
                         <button id="flipHBtn" class="btn-outline-sm m-0"><i class="fas fa-arrows-alt-h"></i> Flip H</button>
                         <button id="flipVBtn" class="btn-outline-sm m-0"><i class="fas fa-arrows-alt-v"></i> Flip V</button>
@@ -178,26 +209,28 @@
                 <hr class="divider">
 
                 <div class="editor-section">
-                    <label class="section-title"><i class="fas fa-adjust"></i> Pro Retouching</label>
+                    <label class="section-title"><i class="fas fa-adjust"></i> Pro Sliders</label>
                     
+                    <div class="slider-group">
+                        <div class="slider-label"><span style="color:var(--primary);"><i class="fas fa-star"></i> Studio Glow</span><span id="glowVal">0%</span></div>
+                        <input type="range" id="studioGlow" class="canva-slider" min="0" max="100" value="0">
+                    </div>
                     <div class="slider-group">
                         <div class="slider-label"><span>Brightness</span><span id="brightVal">100</span></div>
                         <input type="range" id="brightness" class="canva-slider" min="50" max="150" value="100">
                     </div>
                     <div class="slider-group">
-                        <div class="slider-label"><span>Fairness (Contrast)</span><span id="contrastVal">100</span></div>
+                        <div class="slider-label"><span>Contrast</span><span id="contrastVal">100</span></div>
                         <input type="range" id="contrast" class="canva-slider" min="50" max="150" value="100">
                     </div>
                     <div class="slider-group">
                         <div class="slider-label"><span>Color Saturation</span><span id="saturateVal">100</span></div>
                         <input type="range" id="saturation" class="canva-slider" min="0" max="200" value="100">
                     </div>
-
                     <div class="slider-group">
-                        <div class="slider-label"><span>Skin Warmth (Temp)</span><span id="tempVal">0</span></div>
+                        <div class="slider-label"><span>Skin Warmth</span><span id="tempVal">0</span></div>
                         <input type="range" id="temperature" class="canva-slider" min="-50" max="50" value="0">
                     </div>
-
                     <div class="slider-group">
                         <div class="slider-label"><span>Color Tone (Hue)</span><span id="hueVal">0°</span></div>
                         <input type="range" id="hue" class="canva-slider" min="-180" max="180" value="0">
@@ -214,7 +247,6 @@
                         <div class="slider-label"><span>Vintage (Sepia)</span><span id="sepiaVal">0%</span></div>
                         <input type="range" id="sepia" class="canva-slider" min="0" max="100" value="0">
                     </div>
-                    
                     <div class="slider-group">
                         <div class="slider-label"><span>Dark Edges (Vignette)</span><span id="vignetteVal">0%</span></div>
                         <input type="range" id="vignette" class="canva-slider" min="0" max="100" value="0">
@@ -222,7 +254,7 @@
                 </div>
 
                 <button id="resetFilters" class="btn-outline-sm mt-auto w-100" style="margin-top: 20px;">
-                    <i class="fas fa-undo"></i> Reset All Settings
+                    <i class="fas fa-undo"></i> Reset All (R)
                 </button>
             </div>
         </aside>
@@ -234,21 +266,16 @@
                 <h3><i class="fas fa-file-pdf"></i> Print Layout Preview</h3>
                 <button id="closeModalBtn" class="icon-btn"><i class="fas fa-times"></i></button>
             </div>
-            
             <div class="modal-body">
                 <canvas id="previewCanvas"></canvas>
             </div>
-            
-            <div class="modal-footer" style="display: flex; gap: 20px; align-items: center; justify-content: space-between;">
+            <div class="modal-footer">
                 <div class="counter-group">
                     <button id="btnMinus" class="counter-btn"><i class="fas fa-minus"></i></button>
                     <div class="counter-display"><span id="previewCountText">8</span> Copies</div>
                     <button id="btnPlus" class="counter-btn"><i class="fas fa-plus"></i></button>
                 </div>
-                
-                <button id="downloadPdfBtn" class="btn-primary btn-green m-0" style="flex: 1;">
-                    <i class="fas fa-cloud-download-alt"></i> Download PDF
-                </button>
+                <button id="downloadPdfBtn" class="btn-primary btn-green">Download PDF</button>
             </div>
         </div>
     </div>
