@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PixelPass | @StackByUjjwal</title>
+    <title>PixelPass | Professional Editor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -13,251 +13,533 @@
 
     <div id="toast-container"></div>
 
-    <header class="navbar">
-        <div class="logo-area">
-            <div class="logo-icon"><i class="fas fa-crown"></i></div>
-            <div class="logo-text">PixelPass <span class="version">By Ujjwal</span></div>
-        </div>
-        <div class="header-tools">
-            <button id="downloadBtn" class="btn-primary" style="padding: 8px 16px; margin: 0;"><i class="fas fa-download"></i> Download (S)</button>
-            <button id="themeToggle" class="icon-btn" title="Toggle Dark Mode">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
-    </header>
-
-    <div class="app-shell">
-        <main class="workspace">
-            <div class="canvas-wrapper" id="canvasWrapper">
-                <canvas id="editorCanvas"></canvas>
+    <div class="editor-container">
+        <header class="navbar">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-crown"></i></div>
+                <div class="logo-text">PixelPass <span class="version">PRO</span></div>
             </div>
-            <div class="canvas-footer" id="canvasFooterTxt">
-                <span class="res-tag"><i class="fas fa-keyboard"></i> Use Arrows to Fine-tune | Pinch to Zoom</span>
-            </div>
-        </main>
-
-        <aside class="sidebar left-sidebar">
-            <div class="scroll-container">
-                <div class="control-card accent-blue">
-                    <div class="card-header"><span class="badge">01</span><label>Media Source</label></div>
-                    <div class="upload-box" id="dropZone">
-                        <input type="file" id="imageInput" hidden accept="image/*">
-                        <i class="fas fa-cloud-upload-alt upload-ui-icon"></i>
-                        <button class="btn-select" onclick="document.getElementById('imageInput').click()">Upload Photo</button>
-                        <span id="fileName" class="file-info">Max 10MB (JPG, PNG)</span>
+            <div class="header-tools">
+                <div class="export-dropdown-wrapper">
+                    <button id="downloadBtnToggle" class="btn-primary"><i class="fas fa-download"></i> <span class="desktop-text">Export</span></button>
+                    <div id="exportDropdown" class="export-dropdown">
+                        <button id="downloadSingleBtn" class="dropdown-item"><i class="fas fa-image"></i> Download Single Photo</button>
+                        <button id="openPrintModalBtn" class="dropdown-item"><i class="fas fa-file-pdf"></i> Layout & Print (PDF)</button>
                     </div>
                 </div>
-
-                <div class="control-card accent-purple">
-                    <div class="card-header"><span class="badge">02</span><label>Presets & Structure</label></div>
-                    
-                    <div class="grid-2 mb-10">
-                        <button class="btn-outline-sm preset-btn" data-preset="official">Official ID</button>
-                        <button class="btn-outline-sm preset-btn" data-preset="vibrant">Vibrant</button>
-                    </div>
-
-                    <select id="ratioSelect" class="saas-select mb-10">
-                        <option value="413x531" selected>3.5 x 4.5 cm (Standard Passport)</option>
-                        <option value="600x600">2.0 x 2.0 inch (US Visa)</option>
-                        <option value="236x295">2.0 x 2.5 cm (Stamp Size)</option>
-                        <option value="custom">Custom Dimensions</option>
-                    </select>
-                    
-                    <div id="customSizeWrapper" style="display: none; background: var(--bg-main); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                        <select id="customUnit" class="saas-select mb-10">
-                            <option value="px">Pixels (px)</option>
-                            <option value="cm">Centimeters (cm)</option>
-                            <option value="inch">Inches (in)</option>
-                        </select>
-                        <div class="grid-2">
-                            <input type="number" id="customW" class="saas-select" placeholder="Width">
-                            <input type="number" id="customH" class="saas-select" placeholder="Height">
-                        </div>
-                    </div>
-
-                    <div class="toggle-row mb-10">
-                        <label class="field-label m-0"><i class="fas fa-border-all"></i> Cutting Border</label>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="number" id="borderWidth" value="2" min="0" max="20" class="saas-select" style="width: 60px; padding: 5px;">
-                            <input type="checkbox" id="addBorderToggle" class="toggle-checkbox" checked>
-                        </div>
-                    </div>
-                    
-                    <div class="toggle-row mb-10" style="background: #e0e7ff; padding: 8px 10px; border-radius: 6px; border: 1px solid #c7d2fe;">
-                        <label class="field-label m-0" style="color: #4f46e5;"><i class="fas fa-user-circle"></i> Biometric Guide</label>
-                        <input type="checkbox" id="showGuideToggle" class="toggle-checkbox">
-                    </div>
-
-                    <div class="toggle-row mb-10" style="background: #e0f2fe; padding: 8px 10px; border-radius: 6px; border: 1px solid #bae6fd;">
-                        <label class="field-label m-0" style="color: #0284c7;"><i class="fas fa-th"></i> Rule of Thirds</label>
-                        <input type="checkbox" id="showGridToggle" class="toggle-checkbox">
-                    </div>
-
-                    <div class="toggle-row mb-10" style="background: #ffe4e6; padding: 8px 10px; border-radius: 6px; border: 1px solid #fecdd3;">
-                        <label class="field-label m-0" style="color: #e11d48;"><i class="fas fa-exclamation-triangle"></i> Print Safe Zone</label>
-                        <input type="checkbox" id="safeZoneToggle" class="toggle-checkbox">
-                    </div>
-
-                    <div class="toggle-row">
-                        <label class="field-label m-0"><i class="fas fa-font"></i> Add Name & Date</label>
-                        <input type="checkbox" id="addTextToggle" class="toggle-checkbox">
-                    </div>
-                    <div id="textInputsWrapper" style="display: none; gap: 10px; flex-direction: column; margin-top: 10px;">
-                        <input type="text" id="photoName" class="saas-select" placeholder="Enter Full Name">
-                        <input type="text" id="photoDate" class="saas-select" placeholder="DD/MM/YYYY">
-                    </div>
-
-                    <div class="toggle-row mt-10">
-                        <label class="field-label m-0"><i class="fas fa-copyright"></i> Add Watermark</label>
-                        <input type="checkbox" id="addWatermarkToggle" class="toggle-checkbox">
-                    </div>
-                    <div id="watermarkInputsWrapper" style="display: none; gap: 10px; flex-direction: column; margin-top: 10px;">
-                        <input type="text" id="watermarkText" class="saas-select" placeholder="Enter Watermark Text">
-                    </div>
-                </div>
-
-                <div class="control-card accent-orange">
-                    <div class="card-header"><span class="badge">03</span><label>Export & Est.</label></div>
-                    
-                    <div class="slider-group mb-10">
-                        <div class="slider-label" style="margin-bottom: 6px;">
-                            <span style="color:var(--orange);"><i class="fas fa-compress-arrows-alt"></i> Export Resolution</span>
-                            <span id="resVal" style="font-weight: 800;">1x (Std)</span>
-                        </div>
-                        <input type="range" id="resolutionSlider" class="canva-slider" min="1" max="4" value="1" step="1">
-                    </div>
-
-                    <div class="grid-2">
-                        <select id="imgFormat" class="saas-select">
-                            <option value="image/jpeg">JPG</option>
-                            <option value="image/png">PNG</option>
-                        </select>
-                        <div class="kb-input-group">
-                            <input type="number" id="targetKB" placeholder="KB limit">
-                            <span class="kb-label">KB</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 12px; font-weight: 600; text-align: center; background: var(--bg-main); padding: 8px; border-radius: 6px;">
-                        Live Est. Size: <strong id="liveEstSize" style="color: var(--primary);">0 KB</strong>
-                    </div>
-                </div>
-
-                <div class="control-card accent-green">
-                    <div class="card-header"><span class="badge">04</span><label>Print Studio</label></div>
-                    <label class="field-label">Paper Format</label>
-                    <select id="paperSize" class="saas-select mb-10">
-                        <option value="a4" selected>A4 Sheet (210x297 mm)</option>
-                        <option value="4x6">4x6 Postcard (102x152 mm)</option>
-                    </select>
-                    
-                    <div class="toggle-row mb-10">
-                        <label class="field-label m-0"><i class="fas fa-cut"></i> Add Crop Marks</label>
-                        <input type="checkbox" id="printCropMarks" class="toggle-checkbox" checked>
-                    </div>
-                    <button id="openPrintModalBtn" class="btn-primary btn-green mt-10">
-                        <i class="fas fa-print"></i> Layout & Print Sheet
-                    </button>
-                </div>
-            </div>
-            
-            <div class="brand-footer">
-                <p>Engineered by <strong>@StackByUjjwal</strong></p>
-                <div class="social-icons">
-                    <a href="https://github.com/stackbyujjwal" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/stackbyujjwal" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.instagram.com/stackbyujjwal" target="_blank"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </aside>
-
-        <aside class="sidebar right-sidebar disabled-panel" id="rightSidebar">
-            <div class="panel-header">
-                <div><i class="fas fa-sliders-h"></i> Retouching Tools</div>
-            </div>
-            
-            <div class="scroll-container" style="padding: 0;">
-                <div class="editor-section mt-10">
-                    <label class="section-title"><i class="fas fa-magic"></i> AI Actions</label>
-                    <div class="grid-2">
-                        <button id="removeBGBtn" class="btn-outline-sm m-0"><i class="fas fa-eraser"></i> Cutout BG</button>
-                        <button id="aiEnhanceBtn" class="btn-outline-sm m-0"><i class="fas fa-wand-magic-sparkles"></i> Auto Fix</button>
-                    </div>
-                    <div class="setting-row mt-10">
-                        <span class="field-label m-0">Background Color</span>
-                        <input type="color" id="bgColor" value="#ffffff">
-                    </div>
-                </div>
-
-                <hr class="divider">
-
-                <div class="editor-section">
-                    <label class="section-title"><i class="fas fa-crop-alt"></i> Transform</label>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Rotation</span><span id="rotVal">0°</span></div>
-                        <input type="range" id="rotation" class="canva-slider" min="-180" max="180" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Corner Radius</span><span id="radiusVal">0px</span></div>
-                        <input type="range" id="cornerRadius" class="canva-slider" min="0" max="100" value="0">
-                    </div>
-                    <div class="grid-2 mt-10">
-                        <button id="flipHBtn" class="btn-outline-sm m-0"><i class="fas fa-arrows-alt-h"></i> Flip H</button>
-                        <button id="flipVBtn" class="btn-outline-sm m-0"><i class="fas fa-arrows-alt-v"></i> Flip V</button>
-                    </div>
-                </div>
-
-                <hr class="divider">
-
-                <div class="editor-section">
-                    <label class="section-title"><i class="fas fa-adjust"></i> Pro Sliders</label>
-                    
-                    <div class="slider-group">
-                        <div class="slider-label"><span style="color:var(--primary);"><i class="fas fa-star"></i> Studio Glow</span><span id="glowVal">0%</span></div>
-                        <input type="range" id="studioGlow" class="canva-slider" min="0" max="100" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Brightness</span><span id="brightVal">100</span></div>
-                        <input type="range" id="brightness" class="canva-slider" min="50" max="150" value="100">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Contrast</span><span id="contrastVal">100</span></div>
-                        <input type="range" id="contrast" class="canva-slider" min="50" max="150" value="100">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Color Saturation</span><span id="saturateVal">100</span></div>
-                        <input type="range" id="saturation" class="canva-slider" min="0" max="200" value="100">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Skin Warmth</span><span id="tempVal">0</span></div>
-                        <input type="range" id="temperature" class="canva-slider" min="-50" max="50" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Color Tone (Hue)</span><span id="hueVal">0°</span></div>
-                        <input type="range" id="hue" class="canva-slider" min="-180" max="180" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>B&W (Grayscale)</span><span id="grayVal">0%</span></div>
-                        <input type="range" id="grayscale" class="canva-slider" min="0" max="100" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Soften Skin (Blur)</span><span id="blurVal">0px</span></div>
-                        <input type="range" id="blur" class="canva-slider" min="0" max="10" step="0.5" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Vintage (Sepia)</span><span id="sepiaVal">0%</span></div>
-                        <input type="range" id="sepia" class="canva-slider" min="0" max="100" value="0">
-                    </div>
-                    <div class="slider-group">
-                        <div class="slider-label"><span>Dark Edges (Vignette)</span><span id="vignetteVal">0%</span></div>
-                        <input type="range" id="vignette" class="canva-slider" min="0" max="100" value="0">
-                    </div>
-                </div>
-
-                <button id="resetFilters" class="btn-outline-sm mt-auto w-100" style="margin-top: 20px;">
-                    <i class="fas fa-undo"></i> Reset All (R)
+                <button id="themeToggle" class="icon-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
                 </button>
             </div>
-        </aside>
+        </header>
+
+        <div class="editor-body">
+            
+            <nav class="sidebar-nav desktop-only">
+                <button class="nav-tab active" data-index="0" title="Media"><i class="fas fa-images"></i><span>Media</span></button>
+                <button class="nav-tab" data-index="1" title="Structure"><i class="fas fa-crop-alt"></i><span>Layout</span></button>
+                <button class="nav-tab" data-index="2" title="Retouch"><i class="fas fa-sliders-h"></i><span>Retouch</span></button>
+                <button class="nav-tab" data-index="3" title="Filters"><i class="fas fa-magic"></i><span>FX & Filter</span></button>
+                <button class="nav-tab" data-index="4" title="Elements"><i class="fas fa-shapes"></i><span>Elements</span></button>
+                <button class="nav-tab" data-index="5" title="Export"><i class="fas fa-file-export"></i><span>Export</span></button>
+            </nav>
+
+            <aside class="panels-wrapper">
+                <div class="panels-container" id="panelsContainer">
+                    
+                    <div class="panel-card" id="panel-media">
+                        <div class="panel-header"><div><i class="fas fa-images"></i> Media Source</div></div>
+                        <div class="panel-content scrollable">
+                            <div class="upload-box" id="dropZone" onclick="document.getElementById('imageInput').click()">
+                                <input type="file" id="imageInput" hidden accept="image/*">
+                                <i class="fas fa-cloud-upload-alt upload-ui-icon"></i>
+                                <h4>Upload Image</h4>
+                                <span id="fileName" class="file-info">Max 10MB (JPG, PNG)</span>
+                            </div>
+                            
+                            <div class="editor-section mt-10">
+                                <label class="section-title"><i class="fas fa-robot"></i> Quick Actions & Presets</label>
+                                <div class="grid-2 mb-10">
+                                    <button id="removeBGBtn" class="btn-outline-sm m-0"><i class="fas fa-eraser"></i> Cutout BG</button>
+                                    <button id="aiEnhanceBtn" class="btn-outline-sm m-0"><i class="fas fa-wand-magic-sparkles"></i> Auto Fix</button>
+                                </div>
+                                <div class="preset-grid">
+                                    <button id="aiColorBtn" class="btn-outline-sm m-0"><i class="fas fa-palette"></i> Auto Color</button>
+                                    <button id="aiBrightBtn" class="btn-outline-sm m-0"><i class="fas fa-sun"></i> Brighten</button>
+                                    <button id="aiSharpBtn" class="btn-outline-sm m-0"><i class="fas fa-adjust"></i> Sharp & Clear</button>
+                                    <button id="aiPortraitBtn" class="btn-outline-sm m-0"><i class="fas fa-user"></i> Portrait</button>
+                                </div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <div class="editor-section mt-10">
+                                <label class="section-title"><i class="fas fa-fill-drip"></i> Background Settings</label>
+                                <div class="setting-row mb-10 flex-align justify-between">
+                                    <span class="field-label m-0">Canvas Color Fill</span>
+                                    <input type="color" id="bgColor" value="#ffffff" style="width: 40px; height: 30px;">
+                                </div>
+                                <div class="toggle-row mb-10" style="background: rgba(99, 102, 241, 0.1); padding: 10px; border-radius: 8px;">
+                                    <label class="field-label m-0" style="color: var(--primary);"><i class="fas fa-chess-board"></i> Transparent Canvas</label>
+                                    <input type="checkbox" id="transparentBgToggle" class="pro-toggle">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" id="panel-presets">
+                        <div class="panel-header"><div><i class="fas fa-crop-alt"></i> Dimension & Structure</div></div>
+                        <div class="panel-content scrollable">
+                            <label class="field-label mt-10">Crop Ratio & Shapes</label>
+                            <select id="ratioSelect" class="saas-select mb-10">
+                                <option value="413x531" selected>3.5 x 4.5 cm (Standard Passport)</option>
+                                <option value="600x600">2.0 x 2.0 inch (US Visa)</option>
+                                <option value="236x295">2.0 x 2.5 cm (Stamp Size)</option>
+                                <option value="custom">Custom Dimensions</option>
+                            </select>
+                            
+                            <div id="customSizeWrapper" style="display: none; background: var(--bg-main); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                <select id="customUnit" class="saas-select mb-10">
+                                    <option value="px">Pixels (px)</option>
+                                    <option value="cm">Centimeters (cm)</option>
+                                    <option value="inch">Inches (in)</option>
+                                </select>
+                                <div class="grid-2">
+                                    <input type="number" id="customW" class="saas-select" placeholder="Width">
+                                    <input type="number" id="customH" class="saas-select" placeholder="Height">
+                                </div>
+                            </div>
+
+                            <div class="pro-toggles-group">
+                                <div class="toggle-row">
+                                    <label class="field-label m-0" style="color: var(--primary);"><i class="fas fa-circle"></i> Circular DP Crop</label>
+                                    <input type="checkbox" id="circleCropToggle" class="pro-toggle">
+                                </div>
+                                <div class="slider-group mt-10 mb-10">
+                                    <div class="slider-label"><span><i class="fas fa-compress"></i> Inner Padding</span><span id="marginVal">0px</span></div>
+                                    <input type="range" id="innerMargin" class="pro-slider" min="0" max="50" value="0">
+                                </div>
+                                <div class="toggle-row">
+                                    <label class="field-label m-0"><i class="fas fa-border-all"></i> Cutting Border</label>
+                                    <div class="flex-align">
+                                        <input type="number" id="borderWidth" value="2" min="0" max="20" class="saas-select mr-10" style="width: 50px; padding: 4px;">
+                                        <input type="checkbox" id="addBorderToggle" class="pro-toggle" checked>
+                                    </div>
+                                </div>
+                                <div id="borderOptionsWrapper" class="grid-2 mb-10">
+                                    <select id="borderStyle" class="saas-select" style="padding: 6px; font-size: 11px;">
+                                        <option value="solid">Solid</option>
+                                        <option value="dashed">Dashed</option>
+                                        <option value="dotted">Dotted</option>
+                                    </select>
+                                    <input type="range" id="borderOpacity" class="pro-slider" min="10" max="100" value="100" title="Border Opacity">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card disabled-panel" id="rightSidebar">
+                        <div class="panel-header"><div><i class="fas fa-sliders-h"></i> Retouch Tools</div></div>
+                        <div class="panel-content scrollable" style="padding: 10px;">
+                            
+                            <div class="accordion-item active">
+                                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                                    <span><i class="fas fa-crop-alt"></i> Transform & Alignment</span>
+                                    <i class="fas fa-chevron-down arrow"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="grid-2 mb-10">
+                                        <button id="fitBtn" class="btn-outline-sm m-0"><i class="fas fa-compress"></i> Auto Fit</button>
+                                        <button id="fillBtn" class="btn-outline-sm m-0"><i class="fas fa-expand"></i> Auto Fill</button>
+                                    </div>
+                                    <div class="toggle-row mb-10">
+                                        <span class="field-label m-0">Center Crosshair</span>
+                                        <input type="checkbox" id="crosshairToggle" class="pro-toggle">
+                                    </div>
+                                    <div class="grid-2 mb-10">
+                                        <button id="rotLeftBtn" class="btn-outline-sm m-0"><i class="fas fa-undo"></i> -90°</button>
+                                        <button id="rotRightBtn" class="btn-outline-sm m-0"><i class="fas fa-redo"></i> +90°</button>
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Fine Rotation</span><span id="rotVal">0°</span></div>
+                                        <input type="range" id="rotation" class="pro-slider" min="-45" max="45" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Corner Radius</span><span id="radiusVal">0px</span></div>
+                                        <input type="range" id="cornerRadius" class="pro-slider" min="0" max="100" value="0">
+                                    </div>
+                                    <div class="grid-2 mt-10">
+                                        <button id="flipHBtn" class="btn-outline-sm m-0"><i class="fas fa-arrows-alt-h"></i> Flip H</button>
+                                        <button id="flipVBtn" class="btn-outline-sm m-0"><i class="fas fa-arrows-alt-v"></i> Flip V</button>
+                                    </div>
+                                    <div class="grid-2 mt-10">
+                                        <div class="toggle-row" style="padding:0;">
+                                            <span style="font-size: 10px;">Mirror H</span>
+                                            <input type="checkbox" id="mirrorHToggle" class="pro-toggle" style="transform: scale(0.8);">
+                                        </div>
+                                        <div class="toggle-row" style="padding:0;">
+                                            <span style="font-size: 10px;">Mirror V</span>
+                                            <input type="checkbox" id="mirrorVToggle" class="pro-toggle" style="transform: scale(0.8);">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                                    <span><i class="fas fa-adjust"></i> Light & Color</span>
+                                    <i class="fas fa-chevron-down arrow"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Exposure</span><span id="exposureVal">100</span></div>
+                                        <input type="range" id="exposure" class="pro-slider" min="50" max="150" value="100">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Brightness</span><span id="brightVal">100</span></div>
+                                        <input type="range" id="brightness" class="pro-slider" min="50" max="150" value="100">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Contrast</span><span id="contrastVal">100</span></div>
+                                        <input type="range" id="contrast" class="pro-slider" min="50" max="150" value="100">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Saturation</span><span id="saturateVal">100</span></div>
+                                        <input type="range" id="saturation" class="pro-slider" min="0" max="200" value="100">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Warmth (Temp)</span><span id="tempVal">0</span></div>
+                                        <input type="range" id="temperature" class="pro-slider" min="-50" max="50" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Tint (Green/Magenta)</span><span id="tintVal">0</span></div>
+                                        <input type="range" id="tint" class="pro-slider" min="-50" max="50" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="resetFilters" class="btn-outline-sm w-100 mt-10">
+                                <i class="fas fa-undo"></i> Reset All Settings
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel-card disabled-panel" id="panel-fx">
+                        <div class="panel-header"><div><i class="fas fa-magic"></i> Pro FX & Filters</div></div>
+                        <div class="panel-content scrollable">
+                            
+                            <label class="section-title"><i class="fas fa-palette"></i> Pre-Assigned Pro Filters</label>
+                            <div class="preset-grid mb-10">
+                                <button class="btn-outline-sm master-preset" data-filter="cinematic">Cinematic</button>
+                                <button class="btn-outline-sm master-preset" data-filter="noir">Noir B&W</button>
+                                <button class="btn-outline-sm master-preset" data-filter="vintage">Vintage</button>
+                                <button class="btn-outline-sm master-preset" data-filter="cyberpunk">Cyberpunk</button>
+                                <button class="btn-outline-sm master-preset" data-filter="polaroid">Polaroid</button>
+                                <button class="btn-outline-sm master-preset" data-filter="autumn">Autumn</button>
+                                <button class="btn-outline-sm master-preset" data-filter="winter">Winter</button>
+                                <button class="btn-outline-sm master-preset" data-filter="matte">Matte</button>
+                                <button class="btn-outline-sm master-preset" data-filter="sunset">Sunset</button>
+                                <button class="btn-outline-sm master-preset" data-filter="matrix">The Matrix</button>
+                            </div>
+
+                            <hr class="divider">
+
+                            <label class="section-title"><i class="fas fa-flask"></i> Advanced Effects</label>
+                            
+                            <div class="slider-group">
+                                <div class="slider-label"><span><i class="fas fa-border-all"></i> Pixelate (8-Bit)</span><span id="pixelVal">0</span></div>
+                                <input type="range" id="pixelate" class="pro-slider" min="0" max="50" value="0">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-label"><span style="color:var(--primary);"><i class="fas fa-vr-cardboard"></i> RGB Split (Aberration)</span><span id="rgbSplitVal">0</span></div>
+                                <input type="range" id="rgbSplit" class="pro-slider" min="0" max="30" value="0">
+                            </div>
+                            
+                            <div class="slider-group">
+                                <div class="slider-label"><span>Posterize Depth</span><span id="posterizeVal">0</span></div>
+                                <input type="range" id="posterize" class="pro-slider" min="0" max="10" value="0">
+                            </div>
+
+                            <div class="toggle-row mb-10" style="background: rgba(220, 38, 38, 0.1); padding: 10px; border-radius: 8px;">
+                                <label class="field-label m-0" style="color: #dc2626;"><i class="fas fa-bolt"></i> Cyber Glitch FX</label>
+                                <input type="checkbox" id="glitchToggle" class="pro-toggle">
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                                    <span><i class="fas fa-adjust"></i> Duotone & Color Grading</span>
+                                    <i class="fas fa-chevron-down arrow"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="toggle-row mb-10">
+                                        <span class="field-label m-0">Enable Duotone</span>
+                                        <input type="checkbox" id="duotoneToggle" class="pro-toggle">
+                                    </div>
+                                    <div class="grid-2">
+                                        <div><span style="font-size: 10px;">Highlights</span><input type="color" id="duoLight" value="#ff0055" style="width:100%; height:30px;"></div>
+                                        <div><span style="font-size: 10px;">Shadows</span><input type="color" id="duoDark" value="#000033" style="width:100%; height:30px;"></div>
+                                    </div>
+                                    <hr class="divider" style="margin: 10px 0;">
+                                    <label class="field-label">Gradient Overlay</label>
+                                    <div class="toggle-row mb-10">
+                                        <span class="field-label m-0">Enable Gradient</span>
+                                        <input type="checkbox" id="gradientToggle" class="pro-toggle">
+                                    </div>
+                                    <div class="grid-2 mb-10">
+                                        <input type="color" id="gradColor1" value="#ff7e5f" style="width:100%; height:30px;">
+                                        <input type="color" id="gradColor2" value="#feb47b" style="width:100%; height:30px;">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Angle</span><span id="gradAngleVal">0°</span></div>
+                                        <input type="range" id="gradAngle" class="pro-slider" min="0" max="360" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Opacity</span><span id="gradOpVal">50%</span></div>
+                                        <input type="range" id="gradOpacity" class="pro-slider" min="0" max="100" value="50">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+                                    <span><i class="fas fa-sparkles"></i> Classic FX (Blur/Grain)</span>
+                                    <i class="fas fa-chevron-down arrow"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Grayscale (B&W)</span><span id="grayVal">0%</span></div>
+                                        <input type="range" id="grayscale" class="pro-slider" min="0" max="100" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Vintage Sepia</span><span id="sepiaVal">0%</span></div>
+                                        <input type="range" id="sepia" class="pro-slider" min="0" max="100" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Color Hue Shift</span><span id="hueVal">0°</span></div>
+                                        <input type="range" id="hue" class="pro-slider" min="-180" max="180" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Image Opacity</span><span id="opacityVal">100%</span></div>
+                                        <input type="range" id="opacity" class="pro-slider" min="10" max="100" value="100">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span style="color:var(--primary);">Studio Glow</span><span id="glowVal">0%</span></div>
+                                        <input type="range" id="studioGlow" class="pro-slider" min="0" max="100" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Film Grain</span><span id="grainVal">0%</span></div>
+                                        <input type="range" id="grain" class="pro-slider" min="0" max="100" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Soften Skin (Blur)</span><span id="blurVal">0px</span></div>
+                                        <input type="range" id="blur" class="pro-slider" min="0" max="10" step="0.5" value="0">
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-label"><span>Vignette Darkness</span><span id="vignetteVal">0%</span></div>
+                                        <input type="range" id="vignette" class="pro-slider" min="0" max="100" value="0">
+                                    </div>
+                                    <div class="setting-row mb-10 flex-align justify-between">
+                                        <span class="field-label m-0">Vignette Color</span>
+                                        <input type="color" id="vignetteColor" value="#000000">
+                                    </div>
+                                    <div class="toggle-row mt-10">
+                                        <span class="field-label m-0">Invert Colors (Negative)</span>
+                                        <input type="checkbox" id="invertToggle" class="pro-toggle">
+                                    </div>
+                                    <div class="toggle-row mb-10">
+                                        <label class="field-label m-0" style="color: #10b981;"><i class="fab fa-instagram"></i> Insta Blur BG</label>
+                                        <input type="checkbox" id="instaBlurBgToggle" class="pro-toggle">
+                                    </div>
+                                    <div class="toggle-row mb-10">
+                                        <span class="field-label m-0">Image Drop Shadow</span>
+                                        <input type="checkbox" id="dropShadowToggle" class="pro-toggle">
+                                    </div>
+                                    <div class="toggle-row mb-10">
+                                        <span class="field-label m-0">Glass Reflection</span>
+                                        <input type="checkbox" id="reflectionToggle" class="pro-toggle">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card disabled-panel" id="panel-elements">
+                        <div class="panel-header"><div><i class="fas fa-shapes"></i> Text & Elements</div></div>
+                        <div class="panel-content scrollable">
+                            
+                            <label class="section-title"><i class="fas fa-font"></i> Advanced Typography</label>
+                            <div class="toggle-row">
+                                <label class="field-label m-0"><i class="fas fa-font"></i> Add Name & Date</label>
+                                <input type="checkbox" id="addTextToggle" class="pro-toggle">
+                            </div>
+
+                            <div id="textInputsWrapper" style="display: none; background: var(--bg-main); padding: 10px; border-radius: 8px; margin-top: 10px; gap: 8px; flex-direction: column;">
+                                <input type="text" id="photoName" class="saas-select" placeholder="Enter Full Name">
+                                <input type="text" id="photoDate" class="saas-select" placeholder="DD/MM/YYYY">
+                                <div class="grid-2">
+                                    <select id="textFont" class="saas-select">
+                                        <option value="Arial">Arial</option>
+                                        <option value="'Times New Roman'">Times New Roman</option>
+                                        <option value="'Courier New'">Courier</option>
+                                        <option value="Impact">Impact</option>
+                                        <option value="Georgia">Georgia</option>
+                                    </select>
+                                    <select id="textPosition" class="saas-select">
+                                        <option value="bottom">Bottom</option>
+                                        <option value="top">Top</option>
+                                    </select>
+                                </div>
+                                <div class="grid-2 mt-10">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="color" id="textColor" value="#000000" style="width: 30px; height: 30px; border: none; border-radius: 4px; padding: 0;">
+                                        <span style="font-size: 11px; font-weight: 600;">Text</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="color" id="textBgColor" value="#ffffff" style="width: 30px; height: 30px; border: none; border-radius: 4px; padding: 0;">
+                                        <span style="font-size: 11px; font-weight: 600;">Bg</span>
+                                    </div>
+                                </div>
+                                <div class="slider-group m-0 mt-10">
+                                    <div class="slider-label" style="font-size: 10px;"><span>Letter Spacing</span><span id="letterSpVal">0px</span></div>
+                                    <input type="range" id="letterSpacing" class="pro-slider" min="0" max="20" value="0">
+                                </div>
+                                
+                                <hr style="border-top:1px solid var(--border); margin:10px 0;">
+                                
+                                <div class="toggle-row">
+                                    <span style="font-size: 11px; font-weight: 600;">Text Outline / Stroke</span>
+                                    <input type="checkbox" id="textStrokeToggle" class="pro-toggle">
+                                </div>
+                                <div class="grid-2" id="textStrokeWrapper" style="display:none;">
+                                    <input type="color" id="textStrokeColor" value="#ffffff" style="width: 100%; height: 30px; border: none; border-radius: 4px;">
+                                    <input type="range" id="textStrokeWidth" class="pro-slider" min="1" max="10" value="2" style="margin-top:10px;">
+                                </div>
+                                
+                                <div class="toggle-row mt-10">
+                                    <span style="font-size: 11px; font-weight: 600;">Text Drop Shadow</span>
+                                    <input type="checkbox" id="textShadowToggle" class="pro-toggle">
+                                </div>
+                                <div class="slider-group m-0">
+                                    <div class="slider-label" style="font-size: 10px;"><span>Opacity</span><span id="textOpVal">100%</span></div>
+                                    <input type="range" id="textOpacity" class="pro-slider" min="10" max="100" value="100">
+                                </div>
+                            </div>
+
+                            <div class="toggle-row mt-10">
+                                <label class="field-label m-0"><i class="fas fa-copyright"></i> Watermark</label>
+                                <input type="checkbox" id="addWatermarkToggle" class="pro-toggle">
+                            </div>
+                            <div id="watermarkInputsWrapper" style="display: none; gap: 10px; flex-direction: column; margin-top: 10px;">
+                                <input type="text" id="watermarkText" class="saas-select" placeholder="Watermark Text">
+                            </div>
+
+                            <hr class="divider">
+                            <label class="section-title"><i class="fas fa-th-large"></i> Canvas Patterns</label>
+                            <label class="field-label">Background Pattern</label>
+                            <select id="canvasPattern" class="saas-select mb-10">
+                                <option value="none">None (Solid Color)</option>
+                                <option value="grid">Grid Paper</option>
+                                <option value="dots">Polka Dots</option>
+                                <option value="stripes">Diagonal Stripes</option>
+                            </select>
+                            <div class="grid-2">
+                                <div><span style="font-size: 10px;">Pattern Color</span><input type="color" id="patternColor" value="#cccccc" style="width:100%; height:30px;"></div>
+                                <div><span style="font-size: 10px;">Pattern Size</span><input type="range" id="patternSize" class="pro-slider" min="10" max="100" value="20" style="margin-top:10px;"></div>
+                            </div>
+
+                            <hr class="divider">
+                            <label class="field-label">Color Overlay & Blend Mode</label>
+                            <div class="grid-2">
+                                <input type="color" id="overlayColor" value="#6366f1" style="width: 100%; height: 38px; border: none; border-radius: 8px; padding: 0;">
+                                <select id="overlayMode" class="saas-select" style="padding: 8px;">
+                                    <option value="none">None</option>
+                                    <option value="multiply">Multiply</option>
+                                    <option value="screen">Screen</option>
+                                    <option value="overlay">Overlay</option>
+                                    <option value="color-dodge">Color Dodge</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card" id="panel-export">
+                        <div class="panel-header"><div><i class="fas fa-file-export"></i> Export & Studio</div></div>
+                        <div class="panel-content scrollable">
+                            <label class="section-title">Digital Export</label>
+
+                            <div class="slider-group mb-10">
+                                <div class="slider-label">
+                                    <span style="color:var(--primary);"><i class="fas fa-compress-arrows-alt"></i> Quality Upscale</span>
+                                    <span id="resVal">1x (Std)</span>
+                                </div>
+                                <input type="range" id="resolutionSlider" class="pro-slider" min="1" max="4" value="1" step="1">
+                            </div>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label class="field-label">Format</label>
+                                    <select id="imgFormat" class="saas-select">
+                                        <option value="image/jpeg">JPG</option>
+                                        <option value="image/png">PNG</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="field-label">Size Limit</label>
+                                    <div class="kb-input-group">
+                                        <input type="number" id="targetKB" placeholder="Limit">
+                                        <span class="kb-label">KB</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="live-size-box mt-10">
+                                Live Est. Size: <strong id="liveEstSize">0 KB</strong>
+                            </div>
+
+                            <hr class="divider">
+
+                            <label class="section-title">Print Layout</label>
+                            <label class="field-label">Paper Format</label>
+                            <select id="paperSize" class="saas-select mb-10">
+                                <option value="a4" selected>A4 Sheet (210x297 mm)</option>
+                                <option value="4x6">4x6 Postcard (102x152 mm)</option>
+                            </select>
+                            
+                            <div class="toggle-row mb-10">
+                                <label class="field-label m-0"><i class="fas fa-cut"></i> Crop Marks</label>
+                                <input type="checkbox" id="printCropMarks" class="pro-toggle" checked>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </aside>
+
+            <main class="workspace">
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <canvas id="editorCanvas"></canvas>
+                </div>
+                
+                <div class="zoom-controls">
+                    <button id="zoomOutBtn" class="icon-btn"><i class="fas fa-minus"></i></button>
+                    <input type="range" id="workspaceZoom" min="10" max="300" value="100" class="pro-slider">
+                    <button id="zoomInBtn" class="icon-btn"><i class="fas fa-plus"></i></button>
+                    <span id="zoomVal">100%</span>
+                </div>
+
+                <div class="canvas-footer" id="canvasFooterTxt">
+                    <span class="res-tag"><i class="fas fa-keyboard"></i> Arrow Keys = Nudge | Ctrl + Wheel = Zoom</span>
+                </div>
+            </main>
+        </div>
+
+        <nav class="mobile-bottom-nav mobile-only">
+            <button class="nav-tab active" data-index="0"><i class="fas fa-images"></i><span>Media</span></button>
+            <button class="nav-tab" data-index="1"><i class="fas fa-crop-alt"></i><span>Layout</span></button>
+            <button class="nav-tab" data-index="2"><i class="fas fa-sliders-h"></i><span>Retouch</span></button>
+            <button class="nav-tab" data-index="3"><i class="fas fa-magic"></i><span>FX</span></button>
+            <button class="nav-tab" data-index="4"><i class="fas fa-shapes"></i><span>Elements</span></button>
+            <button class="nav-tab" data-index="5"><i class="fas fa-file-export"></i><span>Export</span></button>
+        </nav>
     </div>
 
     <div id="printModal" class="modal-overlay">
@@ -275,7 +557,7 @@
                     <div class="counter-display"><span id="previewCountText">8</span> Copies</div>
                     <button id="btnPlus" class="counter-btn"><i class="fas fa-plus"></i></button>
                 </div>
-                <button id="downloadPdfBtn" class="btn-primary btn-green">Download PDF</button>
+                <button id="downloadPdfBtn" class="btn-primary w-100" style="justify-content: center; max-width: 200px;">Download PDF</button>
             </div>
         </div>
     </div>
