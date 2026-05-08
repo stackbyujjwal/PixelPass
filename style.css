@@ -16,7 +16,15 @@ body[data-theme="dark"] {
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.2s, border-color 0.2s; }
-body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(--text-dark); height: 100vh; overflow: hidden; }
+
+body { 
+    font-family: 'Inter', sans-serif; 
+    background: var(--bg-main); 
+    color: var(--text-dark); 
+    height: 100vh; /* Fallback for older browsers */
+    height: 100dvh; /* Magic Fix for Mobile Address Bar */
+    overflow: hidden; 
+}
 
 .mb-10 { margin-bottom: 12px; } .mt-10 { margin-top: 12px; } .m-0 { margin: 0 !important; } 
 .w-100 { width: 100%; } .flex-align { display: flex; align-items: center; } .justify-between { justify-content: space-between; } .mr-10 { margin-right: 10px; }
@@ -68,7 +76,12 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 .dropdown-item:not(:last-child) { border-bottom: 1px solid var(--border); }
 
 /* Layout Grid */
-.editor-container { display: flex; flex-direction: column; height: 100vh; }
+.editor-container { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100vh; /* Fallback */
+    height: 100dvh; /* Magic Fix */
+}
 .editor-body { display: flex; flex: 1; overflow: hidden; }
 
 /* Canva Style Left Sidebar */
@@ -181,26 +194,38 @@ body[data-theme="dark"] .pro-toggle { background: #4b5563; }
     .mobile-only { display: flex !important; }
     .desktop-text { display: none; }
     .editor-body { flex-direction: column; }
-    .workspace { order: -1; flex: 0 0 45vh; border-bottom: 2px solid var(--border); padding: 10px;}
+    
+    .workspace { 
+        order: -1; 
+        flex: 0 0 40dvh; /* Adjusted to give more space to the bottom panels */
+        border-bottom: 2px solid var(--border); 
+        padding: 10px;
+    }
+    
     .canvas-wrapper { height: 100%; }
     #editorCanvas { max-height: 100%; max-width: 100%; object-fit: contain; }
     .canvas-footer { display: none; }
-    .zoom-controls { bottom: 85px; right: 10px; padding: 6px 12px; }
+    
+    .zoom-controls { 
+        bottom: 15px; /* Brought down so it doesn't overlap excessively */
+        right: 10px; 
+        padding: 6px 12px; 
+        transform: scale(0.9);
+        transform-origin: bottom right;
+    }
+    
     #workspaceZoom { width: 70px; }
+    
     .panels-wrapper { width: 100vw; flex: 1; border-right: none; display: flex; overflow: hidden; background: var(--surface); }
     .panels-container { display: flex; width: 100vw; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
     .panels-container::-webkit-scrollbar { display: none; }
+    
     .panel-card { position: static; min-width: 100vw; height: 100%; display: flex !important; scroll-snap-align: start; }
     .panel-header { padding: 12px 20px; font-size: 14px; }
     
-    /* BULLETPROOF FIX FOR SCROLLING */
-    .panel-content { padding: 15px 20px 20px 20px; }
-    .panel-content::after {
-        content: '';
-        display: block;
-        height: 100px; /* Ye invisible box hamesha end me extra scroll space dega */
-        width: 100%;
-    }
+    /* Solid padding at the bottom to prevent any clipping from the mobile nav bar */
+    .panel-content { padding: 15px 20px 100px 20px !important; }
+    .panel-content::after { display: none; }
     
     .mobile-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 50; padding: 0 5px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.05); overflow-x: auto;}
     .mobile-bottom-nav::-webkit-scrollbar { display: none; }
@@ -209,6 +234,7 @@ body[data-theme="dark"] .pro-toggle { background: #4b5563; }
     .mobile-bottom-nav .nav-tab span { font-size: 9px; font-weight: 600; }
     .mobile-bottom-nav .nav-tab.active { color: var(--primary); }
     .mobile-bottom-nav .nav-tab.active i { transform: translateY(-2px); }
+    
     .modal-footer { flex-direction: column; gap: 15px; }
     #downloadPdfBtn { max-width: 100%; }
 }
