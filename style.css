@@ -192,7 +192,10 @@ body[data-theme="dark"] .pro-toggle { background: #4b5563; }
     .panels-container::-webkit-scrollbar { display: none; }
     .panel-card { position: static; min-width: 100vw; height: 100%; display: flex !important; scroll-snap-align: start; }
     .panel-header { padding: 12px 20px; font-size: 14px; }
-    .panel-content { padding: 15px 20px 85px 20px; }
+    
+    /* ADDED EXTRA PADDING HERE SO BOTTOM ITEMS DON'T HIDE */
+    .panel-content { padding: 15px 20px 120px 20px; }
+    
     .mobile-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 50; padding: 0 5px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.05); overflow-x: auto;}
     .mobile-bottom-nav::-webkit-scrollbar { display: none; }
     .mobile-bottom-nav .nav-tab { background: transparent; border: none; min-width: 60px; flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-muted); transition: 0.2s; cursor: pointer; }
