@@ -33,7 +33,6 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 .logo-text { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; }
 .version { font-size: 10px; color: var(--text-dark); font-weight: 800; background: linear-gradient(135deg, #fef08a, #f59e0b); padding: 3px 8px; border-radius: 20px; margin-left: 8px; }
 
-/* Header Tools Navbar Flex Fix */
 .header-tools { display: flex; align-items: center; gap: 15px; }
 
 /* Layout */
@@ -43,13 +42,14 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 .scroll-container { padding: 20px; flex: 1; overflow-y: auto; }
 .scroll-container::-webkit-scrollbar { width: 4px; } .scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-/* Brand Footer (StackByUjjwal) */
+/* Brand Footer */
 .brand-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 0 0 var(--radius) var(--radius);}
 .brand-footer p { font-size: 11px; color: var(--text-muted); margin: 0; }
 .brand-footer strong { color: var(--primary); font-weight: 800;}
 .social-icons { display: flex; gap: 12px; }
 .social-icons i { color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 14px;}
 .social-icons i:hover { color: var(--primary); transform: translateY(-2px);}
+.social-icons a { text-decoration: none; display: inline-block; }
 
 /* Cards */
 .control-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; border-left-width: 4px; }
@@ -68,7 +68,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 .field-label { font-size: 11px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); display: block; }
 .saas-select, .kb-input-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; outline: none; }
 .kb-input-group { position: relative; } .kb-label { position: absolute; right: 12px; top: 10px; font-size: 10px; font-weight: 700; color: #94a3b8; }
-#bgColor { width: 32px; height: 32px; border: none; border-radius: 50%; cursor: pointer; -webkit-appearance: none; background: transparent; }
+#bgColor { width: 32px; height: 32px; border: none; border-radius: 50%; cursor: pointer; -webkit-appearance: none; appearance: none; background: transparent; }
 #bgColor::-webkit-color-swatch { border: 2px solid var(--text-muted); border-radius: 50%; }
 
 .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
@@ -77,7 +77,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 /* Workspace */
 .workspace { flex: 1; background: var(--bg-main); border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px); background-size: 24px 24px; border: 1px solid var(--border); overflow: hidden;}
 .canvas-wrapper { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center;}
-#editorCanvas { display: block; max-height: 65vh; max-width: 100%; }
+
+/* Canvas specific background fix */
+#editorCanvas { display: block; max-height: 65vh; max-width: 100%; background-color: transparent; }
+
 .canvas-footer { text-align: center; margin-top: 15px; color: var(--text-muted); font-size: 11px; font-weight: 600; padding: 6px 12px; background: var(--surface); border-radius: 20px;}
 
 /* Pro Editor Right Panel */
@@ -89,7 +92,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 
 .slider-group { margin-bottom: 15px; }
 .slider-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
-.canva-slider { -webkit-appearance: none; width: 100%; height: 6px; background: var(--border); border-radius: 4px; outline: none; }
+.canva-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--border); border-radius: 4px; outline: none; }
 .canva-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--primary); cursor: pointer; }
 
 /* Buttons */
@@ -99,7 +102,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 .btn-outline-sm { background: var(--surface); border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--text-dark); display: flex; justify-content: center; align-items: center; gap: 6px;}
 .btn-outline-sm:hover { border-color: var(--primary); color: var(--primary); }
 
-/* --- PERFECTED MODAL & COUNTER --- */
+.preset-btn { font-size: 10px !important; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; border: 1px solid var(--border); padding: 8px !important; }
+.preset-btn:hover { background: var(--primary); color: white !important; }
+
+/* Modal & Counter */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
 .modal-content { background: var(--surface); width: 95%; max-width: 600px; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
 .modal-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
@@ -108,8 +114,57 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-main); color: var(
 #previewCanvas { background: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 .modal-footer { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
 
-/* FIXED COUNTER UI */
 .counter-group { display: flex; align-items: stretch; background: var(--border); border-radius: 8px; overflow: hidden; height: 44px;}
 .counter-btn { background: #cbd5e1; border: none; width: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: bold; color: var(--text-dark); transition: 0.2s;}
 .counter-btn:hover { background: #94a3b8; color: white;}
 .counter-display { display: flex; align-items: center; justify-content: center; padding: 0 15px; font-weight: 700; font-size: 14px; color: var(--text-dark); background: var(--surface); min-width: 80px;}
+
+/* --- TOAST NOTIFICATIONS --- */
+#toast-container {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+}
+.toast {
+    background: var(--text-dark); color: white; padding: 12px 24px;
+    border-radius: 30px; font-size: 13px; font-weight: 600;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+    animation: slideInUp 0.3s ease-out, fadeOut 0.3s ease-in 2.5s forwards;
+    display: flex; align-items: center; gap: 10px;
+}
+@keyframes slideInUp { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+
+/* --- MOBILE RESPONSIVENESS FIX FOR STICKY CANVAS --- */
+@media (max-width: 900px) {
+    body { height: auto; overflow: visible; }
+    
+    .navbar { padding: 15px; flex-direction: column; gap: 15px; height: auto; }
+    .header-tools { width: 100%; justify-content: space-between; }
+    
+    .app-shell { flex-direction: column; height: auto; padding: 0; overflow: visible; gap: 0;}
+    
+    /* THE MAGIC FIX: Sticky Canvas */
+    .workspace { 
+        position: sticky; 
+        top: 0; 
+        z-index: 100; 
+        height: 40vh; 
+        min-height: 250px;
+        padding: 10px; 
+        border-radius: 0;
+        background: var(--surface);
+        border-bottom: 3px solid var(--primary);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .canvas-wrapper { padding: 5px; height: 100%; width: 100%; display: flex; align-items: center;}
+    #editorCanvas { max-height: 100%; object-fit: contain;}
+    .canvas-footer { display: none; } 
+    
+    .left-sidebar, .right-sidebar { width: 100%; height: auto; border-radius: 0; padding: 20px; border: none; box-shadow: none; border-bottom: 1px solid var(--border);}
+    .scroll-container { padding: 0; overflow: visible; }
+    
+    .modal-content { margin: 15px; }
+    .modal-footer { flex-direction: column; gap: 15px; }
+    #downloadPdfBtn { width: 100%; }
+    #previewCanvas { width: 100% !important; height: auto !important; }
+}
