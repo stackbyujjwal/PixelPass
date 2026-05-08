@@ -6,7 +6,6 @@ const canvas = document.getElementById('editorCanvas');
 const ctx = canvas.getContext('2d');
 const themeToggle = document.getElementById('themeToggle');
 
-// Sidebar (Left) - Source, Dimensions & Text
 const ratioSelect = document.getElementById('ratioSelect');
 const customSizeWrapper = document.getElementById('customSizeWrapper');
 const customUnit = document.getElementById('customUnit');
@@ -30,7 +29,6 @@ const liveEstSize = document.getElementById('liveEstSize');
 const resolutionSlider = document.getElementById('resolutionSlider'); 
 const resVal = document.getElementById('resVal');
 
-// Sidebar (Right) - Sliders & Actions
 const rightSidebar = document.getElementById('rightSidebar');
 const bgColor = document.getElementById('bgColor');
 const brightnessInp = document.getElementById('brightness');
@@ -54,7 +52,6 @@ const aiEnhanceBtn = document.getElementById('aiEnhanceBtn');
 const resetFiltersBtn = document.getElementById('resetFilters');
 const downloadBtn = document.getElementById('downloadBtn');
 
-// Modal Elements
 const printModal = document.getElementById('printModal');
 const openPrintModalBtn = document.getElementById('openPrintModalBtn');
 const closeModalBtn = document.getElementById('closeModalBtn');
@@ -82,7 +79,6 @@ let isExporting = false;
 let estSizeTimeout;
 let currentUpscale = 1; 
 
-// Drag, Resize & Touch State
 let isDragging = false;
 let isResizing = false;
 let resizeHandle = '';
@@ -93,7 +89,6 @@ const handleSize = 12;
 let initialPinchDist = null;
 let initialPinchScale = 1;
 
-// Polyfill for roundRect (purane browsers ke liye)
 if (!ctx.roundRect) {
     ctx.roundRect = function(x, y, w, h, r) {
         if (w < 2 * r) r = w / 2; 
@@ -175,9 +170,6 @@ themeToggle.onclick = () => {
     themeToggle.innerHTML = isDark ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 };
 
-// ==========================================
-// 3. 4K RESOLUTION SLIDER LOGIC
-// ==========================================
 resolutionSlider.addEventListener('input', (e) => {
     let newUpscale = parseInt(e.target.value);
     if (newUpscale === currentUpscale) return;
@@ -198,9 +190,6 @@ resolutionSlider.addEventListener('input', (e) => {
     saveSession();
 });
 
-// ==========================================
-// PRESETS LOGIC
-// ==========================================
 document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.onclick = () => {
         if (!loadedImg) return showToast("Please upload a photo first!", "exclamation-triangle");
@@ -224,7 +213,6 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     };
 });
 
-// KEYBOARD SHORTCUTS
 window.addEventListener('keydown', (e) => {
     if (!loadedImg || document.activeElement.tagName === 'INPUT') return;
     const moveStep = 5 * currentUpscale;
@@ -239,9 +227,6 @@ window.addEventListener('keydown', (e) => {
     renderEngine();
 });
 
-// ==========================================
-// DIMENSIONS UPDATE
-// ==========================================
 function updateDimensions() {
     let baseW, baseH;
     if (ratioSelect.value === 'custom') {
@@ -285,7 +270,6 @@ function updateDimensions() {
     else renderEngine();
 }
 
-// Event Listeners for Updates
 ratioSelect.addEventListener('change', updateDimensions); 
 customW.addEventListener('input', updateDimensions); 
 customH.addEventListener('input', updateDimensions); 
@@ -300,9 +284,9 @@ addWatermarkToggle.addEventListener('change', (e) => {
     renderEngine(); 
 });
 
-showGuideToggle.addEventListener('change', renderEngine); 
-showGridToggle.addEventListener('change', renderEngine); 
-safeZoneToggle.addEventListener('change', renderEngine); 
+showGuideToggle.addEventListener('change', () => renderEngine()); 
+showGridToggle.addEventListener('change', () => renderEngine()); 
+safeZoneToggle.addEventListener('change', () => renderEngine()); 
 printCropMarks.addEventListener('change', () => { 
     if(printModal.style.display === 'flex') renderPrintPreview(); 
 });
@@ -313,6 +297,8 @@ inputsToWatch.forEach(el => el.addEventListener('input', () => {
     saveSession(); 
 }));
 
+imgFormat.addEventListener('change', () => triggerLiveSizeUpdate());
+
 rotationInp.addEventListener('input', (e) => { 
     rotation = parseInt(e.target.value); 
     renderEngine(); 
@@ -321,9 +307,6 @@ rotationInp.addEventListener('input', (e) => {
 flipHBtn.onclick = () => { flipH *= -1; renderEngine(); }; 
 flipVBtn.onclick = () => { flipV *= -1; renderEngine(); };
 
-// ==========================================
-// UPLOAD LOGIC
-// ==========================================
 imageInput.addEventListener('change', (e) => {
     const file = e.target.files[0]; 
     if(!file) return;
@@ -350,15 +333,14 @@ function resetLayout() {
 }
 
 // ==========================================
-// MASTER RENDER ENGINE
+// MASTER RENDER ENGINE (Fixed skipSizeUpdate logic)
 // ==========================================
-function renderEngine() {
+function renderEngine(skipSizeUpdate = false) {
     canvas.width = targetW; 
     canvas.height = targetH;
     ctx.imageSmoothingEnabled = true; 
     ctx.imageSmoothingQuality = 'high';
 
-    // GUARANTEED CANVAS CLEAR AND BACKGROUND FILL
     ctx.clearRect(0, 0, targetW, targetH);
     
     let cornerRad = (parseInt(cornerRadiusInp.value) || 0) * currentUpscale;
@@ -370,7 +352,6 @@ function renderEngine() {
         ctx.clip(); 
     }
 
-    // Fill Background Color (Ensures it resets to white/transparent if local storage was corrupted)
     ctx.filter = 'none'; 
     ctx.fillStyle = bgColor.value || '#ffffff'; 
     ctx.fillRect(0, 0, targetW, targetH);
@@ -389,7 +370,6 @@ function renderEngine() {
         ctx.scale(flipH, flipV);
         ctx.drawImage(loadedImg, -(loadedImg.width * scale) / 2, -(loadedImg.height * scale) / 2, loadedImg.width * scale, loadedImg.height * scale);
         
-        // Studio Glow
         let glowVal = parseInt(studioGlowInp.value);
         if (glowVal > 0) {
             ctx.globalCompositeOperation = 'screen'; 
@@ -399,7 +379,6 @@ function renderEngine() {
         }
         ctx.restore();
 
-        // Temperature
         let tempVal = parseInt(tempInp.value);
         if (tempVal !== 0) {
             ctx.save(); 
@@ -409,7 +388,6 @@ function renderEngine() {
             ctx.restore();
         }
 
-        // Vignette
         let vigVal = parseInt(vignetteInp.value);
         if (vigVal > 0) {
             ctx.save(); 
@@ -423,7 +401,6 @@ function renderEngine() {
             ctx.restore();
         }
 
-        // Watermark
         if (addWatermarkToggle.checked) {
             ctx.save(); 
             ctx.translate(targetW/2, targetH/2); 
@@ -441,7 +418,6 @@ function renderEngine() {
             ctx.restore();
         }
 
-        // Name & Date Text
         if (addTextToggle.checked) {
             ctx.filter = 'none'; 
             let stripH = targetH * 0.15;
@@ -456,7 +432,6 @@ function renderEngine() {
             ctx.fillText(photoDate.value || "DD/MM/YYYY", targetW / 2, targetH - stripH * 0.25);
         }
 
-        // Guides & Overlays (Hidden during export)
         if (!isExporting) {
             if (showGuideToggle.checked) {
                 ctx.save(); 
@@ -513,7 +488,6 @@ function renderEngine() {
 
     ctx.restore();
 
-    // Outer Border
     if (addBorderToggle.checked) {
         ctx.filter = 'none'; 
         ctx.strokeStyle = '#000000'; 
@@ -529,7 +503,6 @@ function renderEngine() {
         }
     }
 
-    // Update UI labels
     document.getElementById('brightVal').innerText = brightnessInp.value; 
     document.getElementById('contrastVal').innerText = contrastInp.value; 
     document.getElementById('saturateVal').innerText = saturationInp.value; 
@@ -543,30 +516,31 @@ function renderEngine() {
     document.getElementById('radiusVal').innerText = cornerRadiusInp.value + 'px'; 
     document.getElementById('glowVal').innerText = studioGlowInp.value + '%';
     
-    triggerLiveSizeUpdate();
+    if (!skipSizeUpdate) {
+        triggerLiveSizeUpdate();
+    }
 }
 
-// ==========================================
-// LIVE SIZE UPDATER (WITH MB CONVERSION)
-// ==========================================
 function triggerLiveSizeUpdate() {
     clearTimeout(estSizeTimeout);
     estSizeTimeout = setTimeout(() => {
         if (!loadedImg || isExporting) return;
         
-        let tmp = getCleanCanvasData(); 
-        let f = imgFormat.value;
-        let data = tmp.toDataURL(f, 0.9); 
-        
-        // Calculate KB
-        let kb = (data.length * 0.75) / 1024;
-        
-        // Show in MB if > 1024 KB
-        if (kb >= 1024) {
-            let mb = kb / 1024;
-            liveEstSize.innerText = mb.toFixed(2) + " MB";
-        } else {
-            liveEstSize.innerText = Math.round(kb) + " KB";
+        try {
+            let tmp = getCleanCanvasData(); 
+            let f = imgFormat.value;
+            let data = tmp.toDataURL(f, 0.9); 
+            
+            let kb = (data.length * 0.75) / 1024;
+            
+            if (kb >= 1024) {
+                let mb = kb / 1024;
+                liveEstSize.innerText = mb.toFixed(2) + " MB";
+            } else {
+                liveEstSize.innerText = Math.round(kb) + " KB";
+            }
+        } catch(e) {
+            liveEstSize.innerText = "Error";
         }
     }, 400); 
 }
@@ -605,7 +579,6 @@ function drawBoundingBox() {
     });
 }
 
-// Mouse Events
 canvas.addEventListener('mousemove', (e) => {
     if (!loadedImg) return;
     const rect = canvas.getBoundingClientRect(); 
@@ -655,7 +628,7 @@ canvas.addEventListener('mousemove', (e) => {
     let hoveringHandle = handles.find(h => mx >= h.x && mx <= h.x+hs && my >= h.y && my <= h.y+hs);
     
     if (hoveringHandle) canvas.style.cursor = hoveringHandle.cursor;
-    else if (mx > imgX && mx < imgX + loadedImg.width * scale && my > imgY && my < imgY + loadedImg.height * scale) canvas.style.cursor = 'move';
+    else if (mx >= imgX && mx <= imgX + loadedImg.width * scale && my >= imgY && my <= imgY + loadedImg.height * scale) canvas.style.cursor = 'move';
     else canvas.style.cursor = 'default';
 });
 
@@ -678,7 +651,7 @@ canvas.addEventListener('mousedown', (e) => {
         startY = my; 
         originalScale = scale; 
     } 
-    else if (mx > imgX && mx < imgX + loadedImg.width * scale && my > imgY && my < imgY + loadedImg.height * scale) { 
+    else if (mx >= imgX && mx <= imgX + loadedImg.width * scale && my >= imgY && my <= imgY + loadedImg.height * scale) { 
         isDragging = true; 
         startX = mx - imgX; 
         startY = my - imgY; 
@@ -690,7 +663,7 @@ window.addEventListener('mouseup', () => {
     isResizing = false; 
 });
 
-// Touch Events for Mobile
+// FIXED TOUCH LOGIC
 canvas.addEventListener('touchstart', (e) => {
     if (!loadedImg) return;
     e.preventDefault(); 
@@ -702,8 +675,8 @@ canvas.addEventListener('touchstart', (e) => {
         const mx = (e.touches[0].clientX - rect.left) * scaleX; 
         const my = (e.touches[0].clientY - rect.top) * scaleY;
         let hs = handleSize * currentUpscale; 
-        let handles = getHandles(); 
         let hitPad = 15 * currentUpscale; 
+        let handles = getHandles(); 
         
         let clickedHandle = handles.find(h => mx >= h.x - hitPad && mx <= h.x+hs+hitPad && my >= h.y - hitPad && my <= h.y+hs+hitPad); 
         if (clickedHandle) { 
@@ -712,7 +685,8 @@ canvas.addEventListener('touchstart', (e) => {
             startX = mx; 
             startY = my; 
             originalScale = scale; 
-        } else { 
+        } else if (mx >= imgX && mx <= imgX + loadedImg.width * scale && my >= imgY && my <= imgY + loadedImg.height * scale) { 
+            // Fix: Only start dragging if touched inside the image bounds
             isDragging = true; 
             startX = mx - imgX; 
             startY = my - imgY; 
@@ -794,11 +768,11 @@ canvas.addEventListener('touchend', () => {
 });
 
 // ==========================================
-// EXPORT & PRINT LOGIC
+// EXPORT & PRINT LOGIC (Fixed Infinite Loop)
 // ==========================================
 function getCleanCanvasData() {
     isExporting = true; 
-    renderEngine();
+    renderEngine(true); // Stop loop!
     
     let tempCanvas = document.createElement('canvas'); 
     tempCanvas.width = targetW; 
@@ -810,7 +784,7 @@ function getCleanCanvasData() {
     tCtx.putImageData(ctx.getImageData(0,0,targetW,targetH), 0, 0);
     
     isExporting = false; 
-    renderEngine(); 
+    renderEngine(true); // Stop loop!
     return tempCanvas;
 }
 
