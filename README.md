@@ -8,7 +8,7 @@
 </p>
 
 <h2>
-  <a href="YOUR_LIVE_LINK_HERE" target="_blank">
+  <a href="(https://stackbyujjwal.github.io/PixelPass/)" target="_blank">
     <img src="https://img.shields.io/badge/🚀_LAUNCH_LIVE_WORKSPACE-FF0055?style=for-the-badge&logo=rocket&logoColor=white" alt="View Live Project" />
   </a>
 </h2>
