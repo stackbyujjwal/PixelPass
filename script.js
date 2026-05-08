@@ -105,6 +105,20 @@ if (!ctx.roundRect) {
 }
 
 // ==========================================
+// PERFORMANCE SCHEDULER (THE "BUTTER SMOOTH" FIX)
+// ==========================================
+let isRenderPending = false;
+function scheduleRender(skipSizeUpdate = false) {
+    if (!isRenderPending) {
+        isRenderPending = true;
+        requestAnimationFrame(() => {
+            renderEngine(skipSizeUpdate);
+            isRenderPending = false;
+        });
+    }
+}
+
+// ==========================================
 // 1. TOAST NOTIFICATION LOGIC
 // ==========================================
 function showToast(msg, icon = 'check-circle') {
@@ -161,7 +175,7 @@ window.onload = () => {
     loadSession(); 
     updateDimensions(); 
     showToast("Welcome to PixelPass By Ujjwal", "crown"); 
-    renderEngine();
+    scheduleRender();
 };
 
 themeToggle.onclick = () => {
@@ -186,7 +200,7 @@ resolutionSlider.addEventListener('input', (e) => {
     let labels = {1: "1x (Std)", 2: "2x (HD)", 3: "3x (FHD)", 4: "4x (4K)"};
     resVal.innerText = labels[newUpscale];
     
-    renderEngine(); 
+    scheduleRender(); 
     saveSession();
 });
 
@@ -208,7 +222,7 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
             saturationInp.value = 120;
         }
         showToast(`Preset: ${type.toUpperCase()} Applied`); 
-        renderEngine(); 
+        scheduleRender(); 
         saveSession();
     };
 });
@@ -224,7 +238,7 @@ window.addEventListener('keydown', (e) => {
     
     if (e.key.toLowerCase() === 's' && !e.ctrlKey) document.getElementById('downloadBtn').click();
     if (e.key.toLowerCase() === 'r') document.getElementById('resetFilters').click();
-    renderEngine();
+    scheduleRender();
 });
 
 function updateDimensions() {
@@ -267,7 +281,7 @@ function updateDimensions() {
     targetH = newTargetH;
     
     if (!loadedImg) resetLayout(); 
-    else renderEngine();
+    else scheduleRender();
 }
 
 ratioSelect.addEventListener('change', updateDimensions); 
@@ -277,23 +291,23 @@ customUnit.addEventListener('change', updateDimensions);
 
 addTextToggle.addEventListener('change', (e) => { 
     document.getElementById('textInputsWrapper').style.display = e.target.checked ? 'flex' : 'none'; 
-    renderEngine(); 
+    scheduleRender(); 
 });
 addWatermarkToggle.addEventListener('change', (e) => { 
     document.getElementById('watermarkInputsWrapper').style.display = e.target.checked ? 'flex' : 'none'; 
-    renderEngine(); 
+    scheduleRender(); 
 });
 
-showGuideToggle.addEventListener('change', () => renderEngine()); 
-showGridToggle.addEventListener('change', () => renderEngine()); 
-safeZoneToggle.addEventListener('change', () => renderEngine()); 
+showGuideToggle.addEventListener('change', () => scheduleRender()); 
+showGridToggle.addEventListener('change', () => scheduleRender()); 
+safeZoneToggle.addEventListener('change', () => scheduleRender()); 
 printCropMarks.addEventListener('change', () => { 
     if(printModal.style.display === 'flex') renderPrintPreview(); 
 });
 
 const inputsToWatch = [photoName, photoDate, watermarkText, addBorderToggle, borderWidthInp, bgColor, brightnessInp, contrastInp, saturationInp, hueInp, grayInp, blurInp, sepiaInp, tempInp, vignetteInp, cornerRadiusInp, studioGlowInp];
 inputsToWatch.forEach(el => el.addEventListener('input', () => { 
-    renderEngine(); 
+    scheduleRender(); 
     saveSession(); 
 }));
 
@@ -301,11 +315,11 @@ imgFormat.addEventListener('change', () => triggerLiveSizeUpdate());
 
 rotationInp.addEventListener('input', (e) => { 
     rotation = parseInt(e.target.value); 
-    renderEngine(); 
+    scheduleRender(); 
 }); 
 
-flipHBtn.onclick = () => { flipH *= -1; renderEngine(); }; 
-flipVBtn.onclick = () => { flipV *= -1; renderEngine(); };
+flipHBtn.onclick = () => { flipH *= -1; scheduleRender(); }; 
+flipVBtn.onclick = () => { flipV *= -1; scheduleRender(); };
 
 imageInput.addEventListener('change', (e) => {
     const file = e.target.files[0]; 
@@ -329,11 +343,11 @@ function resetLayout() {
     scale = Math.max(targetW / loadedImg.width, targetH / loadedImg.height);
     imgX = (targetW - loadedImg.width * scale) / 2; 
     imgY = (targetH - loadedImg.height * scale) / 2;
-    renderEngine();
+    scheduleRender();
 }
 
 // ==========================================
-// MASTER RENDER ENGINE (Fixed skipSizeUpdate logic)
+// MASTER RENDER ENGINE
 // ==========================================
 function renderEngine(skipSizeUpdate = false) {
     canvas.width = targetW; 
@@ -612,14 +626,14 @@ canvas.addEventListener('mousemove', (e) => {
         originalScale = scale; 
         startX = mx; 
         startY = my; 
-        renderEngine(); 
+        scheduleRender(true); // <-- Smooth rendering update
         return;
     }
     
     if (isDragging) { 
         imgX = mx - startX; 
         imgY = my - startY; 
-        renderEngine(); 
+        scheduleRender(true); // <-- Smooth rendering update
         return; 
     }
 
@@ -663,7 +677,6 @@ window.addEventListener('mouseup', () => {
     isResizing = false; 
 });
 
-// FIXED TOUCH LOGIC
 canvas.addEventListener('touchstart', (e) => {
     if (!loadedImg) return;
     e.preventDefault(); 
@@ -686,7 +699,6 @@ canvas.addEventListener('touchstart', (e) => {
             startY = my; 
             originalScale = scale; 
         } else if (mx >= imgX && mx <= imgX + loadedImg.width * scale && my >= imgY && my <= imgY + loadedImg.height * scale) { 
-            // Fix: Only start dragging if touched inside the image bounds
             isDragging = true; 
             startX = mx - imgX; 
             startY = my - imgY; 
@@ -736,11 +748,11 @@ canvas.addEventListener('touchmove', (e) => {
             originalScale = scale; 
             startX = mx; 
             startY = my; 
-            renderEngine();
+            scheduleRender(true); // <-- Smooth rendering update
         } else if (isDragging) { 
             imgX = mx - startX; 
             imgY = my - startY; 
-            renderEngine(); 
+            scheduleRender(true); // <-- Smooth rendering update
         }
     } else if (e.touches.length === 2 && initialPinchDist) {
         const dx = e.touches[0].clientX - e.touches[1].clientX; 
@@ -757,7 +769,7 @@ canvas.addEventListener('touchmove', (e) => {
         let newH = loadedImg.height * scale;
         imgX -= (newW - oldW) / 2; 
         imgY -= (newH - oldH) / 2; 
-        renderEngine();
+        scheduleRender(true); // <-- Smooth rendering update
     }
 }, {passive: false});
 
@@ -768,11 +780,11 @@ canvas.addEventListener('touchend', () => {
 });
 
 // ==========================================
-// EXPORT & PRINT LOGIC (Fixed Infinite Loop)
+// EXPORT & PRINT LOGIC
 // ==========================================
 function getCleanCanvasData() {
     isExporting = true; 
-    renderEngine(true); // Stop loop!
+    renderEngine(true); // Direct synchronous call required here
     
     let tempCanvas = document.createElement('canvas'); 
     tempCanvas.width = targetW; 
@@ -784,7 +796,7 @@ function getCleanCanvasData() {
     tCtx.putImageData(ctx.getImageData(0,0,targetW,targetH), 0, 0);
     
     isExporting = false; 
-    renderEngine(true); // Stop loop!
+    renderEngine(true); // Direct synchronous call required here
     return tempCanvas;
 }
 
@@ -947,7 +959,7 @@ aiEnhanceBtn.addEventListener('click', () => {
     tempInp.value = 5; 
     vignetteInp.value = 0;
     
-    renderEngine(); 
+    scheduleRender(); 
     saveSession();
     
     const oldHTML = aiEnhanceBtn.innerHTML; 
