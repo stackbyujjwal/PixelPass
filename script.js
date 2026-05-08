@@ -804,7 +804,8 @@ function drawBoundingBox() {
 canvas.addEventListener('mousemove', (e) => {
     if (!loadedImg) return;
     const rect = canvas.getBoundingClientRect(); 
-    const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+    const scaleX = targetW / rect.width; 
+    const scaleY = targetH / rect.height;
     const mx = (e.clientX - rect.left) * scaleX; const my = (e.clientY - rect.top) * scaleY;
     
     if (isResizing) {
@@ -832,7 +833,7 @@ canvas.addEventListener('mousemove', (e) => {
 canvas.addEventListener('mousedown', (e) => {
     if (!loadedImg) return;
     const rect = canvas.getBoundingClientRect(); 
-    const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+    const scaleX = targetW / rect.width; const scaleY = targetH / rect.height;
     const mx = (e.clientX - rect.left) * scaleX; const my = (e.clientY - rect.top) * scaleY;
     let hs = handleSize * currentUpscale; let handles = getHandles();
     let clickedHandle = handles.find(h => mx >= h.x && mx <= h.x+hs && my >= h.y && my <= h.y+hs);
@@ -850,7 +851,8 @@ window.addEventListener('mouseup', () => {
 
 canvas.addEventListener('touchstart', (e) => {
     if (!loadedImg) return; e.preventDefault(); 
-    const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+    const rect = canvas.getBoundingClientRect(); 
+    const scaleX = targetW / rect.width; const scaleY = targetH / rect.height;
     if (e.touches.length === 1) {
         const mx = (e.touches[0].clientX - rect.left) * scaleX; const my = (e.touches[0].clientY - rect.top) * scaleY;
         let hs = handleSize * currentUpscale; let hitPad = 15 * currentUpscale; let handles = getHandles(); 
@@ -867,7 +869,8 @@ canvas.addEventListener('touchstart', (e) => {
 
 canvas.addEventListener('touchmove', (e) => {
     if (!loadedImg) return; e.preventDefault(); 
-    const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+    const rect = canvas.getBoundingClientRect(); 
+    const scaleX = targetW / rect.width; const scaleY = targetH / rect.height;
     if (e.touches.length === 1) {
         const mx = (e.touches[0].clientX - rect.left) * scaleX; const my = (e.touches[0].clientY - rect.top) * scaleY;
         if (isResizing) {
@@ -1022,33 +1025,23 @@ removeBGBtn.addEventListener('click', async () => {
 
         const newImg = new Image();
         newImg.onload = () => {
-            // --- HIGH QUALITY MASKING TRICK STARTS HERE ---
-            // Hum yahan original high-res image ke size ka ek mask canvas banayenge
             const maskCanvas = document.createElement('canvas');
             maskCanvas.width = loadedImg.width;
             maskCanvas.height = loadedImg.height;
             const mCtx = maskCanvas.getContext('2d');
 
-            // 1. Pehle humari original high-quality image draw karenge
             mCtx.drawImage(loadedImg, 0, 0, loadedImg.width, loadedImg.height);
-
-            // 2. Remove.bg se aayi hui smaller image ko as a "Mask" (destination-in) apply karenge
-            // Isse original image ka sirf wahi hissa dikhega jahan API ne subject ko detect kiya hai
             mCtx.globalCompositeOperation = 'destination-in';
             mCtx.drawImage(newImg, 0, 0, loadedImg.width, loadedImg.height);
 
-            // 3. Ab is nayi high-quality masked image ko save karke canvas me daal denge
             const finalImg = new Image();
             finalImg.onload = () => {
                 loadedImg = finalImg; 
-                
                 transparentBgToggle.checked = true;
                 imgFormat.value = 'image/png'; 
-                
                 isFastModeActive = false;
-                scheduleRender(); // Layout or scale change nahi hoga
+                scheduleRender(); 
                 showToast("Background Removed Successfully!", "check-circle");
-                
                 removeBGBtn.innerHTML = originalContent;
                 removeBGBtn.style.pointerEvents = 'auto';
                 removeBGBtn.style.opacity = '1';
@@ -1095,6 +1088,41 @@ if(aiPortraitBtn) aiPortraitBtn.onclick = () => {
     brightnessInp.value = 105; contrastInp.value = 105; tempInp.value = 15; blurInp.value = 0.5; studioGlowInp.value = 5;
     isFastModeActive = false; scheduleRender(); showToast("Portrait Applied", "user");
 };
+
+// ==========================================
+// RESET ALL FILTERS LOGIC
+// ==========================================
+resetFiltersBtn.addEventListener('click', () => {
+    if (!loadedImg) return showToast("Upload photo first!", "exclamation-triangle");
+    
+    // Core color/light settings reset
+    exposureInp.value = 100; brightnessInp.value = 100; contrastInp.value = 100;
+    saturationInp.value = 100; tempInp.value = 0; tintInp.value = 0;
+    
+    // Pro FX & Classic FX reset
+    grayscaleInp.value = 0; sepiaInp.value = 0; hueInp.value = 0;
+    opacityInp.value = 100; grainInp.value = 0; blurInp.value = 0;
+    vignetteInp.value = 0; studioGlowInp.value = 0; pixelateInp.value = 0;
+    rgbSplitInp.value = 0; posterizeInp.value = 0;
+    
+    // Transform & Structure reset
+    rotationInp.value = 0; cornerRadiusInp.value = 0; innerMarginInp.value = 0;
+    borderWidthInp.value = 2; borderOpacity.value = 100;
+
+    // Switch toggles off
+    invertToggle.checked = false; instaBlurBgToggle.checked = false;
+    dropShadowToggle.checked = false; reflectionToggle.checked = false;
+    glitchToggle.checked = false; duotoneToggle.checked = false;
+    gradientToggle.checked = false; addBorderToggle.checked = true;
+    circleCropToggle.checked = false;
+
+    // Reset layout variables
+    rotation = 0; flipH = 1; flipV = 1;
+    
+    // Render back
+    resetLayout(); 
+    showToast("All Settings Reset", "undo");
+});
 
 // ==========================================
 // TABS & MOBILE CONTROLLER
