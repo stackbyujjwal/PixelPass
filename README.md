@@ -1,48 +1,65 @@
 <div align="center">
-  <h1>👑 PixelPass God Mode</h1>
-  <p><b>The Ultimate Web-Based Passport Photo Studio & Print Layout Generator</b></p>
 
-  [![Made by StackByUjjwal](https://img.shields.io/badge/Made%20by-@StackByUjjwal-6366f1?style=for-the-badge&logo=github)](#)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](#)
-  [![Vanilla JS](https://img.shields.io/badge/JavaScript-Vanilla-f59e0b?style=for-the-badge&logo=javascript)](#)
+<h1>👑 PixelPass <span style="color: #6366f1;">God Mode</span></h1>
+
+<p align="center">
+  <b>The Ultimate, Zero-Backend Passport Photo Studio & Print Layout Generator.</b><br>
+  <i>Crafted for Pixel-Perfect Precision & Blazing Fast Performance.</i>
+</p>
+
+<h2>
+  <a href="YOUR_LIVE_LINK_HERE" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_LAUNCH_LIVE_WORKSPACE-FF0055?style=for-the-badge&logo=rocket&logoColor=white" alt="View Live Project" />
+  </a>
+</h2>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Made%20by-@StackByUjjwal-6366f1?style=for-the-badge&logo=github" alt="Creator" />
+  <img src="https://img.shields.io/badge/JavaScript-Vanilla-f59e0b?style=for-the-badge&logo=javascript" alt="Vanilla JS" />
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
+  <img src="https://img.shields.io/badge/License-MIT-10b981?style=for-the-badge" alt="License" />
+</p>
+
+---
+
 </div>
 
-<br/>
+<br>
 
-## 🚀 Overview
-**PixelPass God Mode** is a professional-grade, highly optimized web application designed to eliminate the hassle of creating passport-size photos, visas, and official documents. Engineered for precision, it features a master-level canvas editor, an intelligent file-size compressor (Binary Search algorithm), and a flawless Print Studio that generates ready-to-print PDFs instantly. 
-
-No backend required. Just pure frontend magic. ✨
+> **PixelPass God Mode** transforms your browser into a professional photo editing studio. No servers, no subscriptions. Featuring a master-level canvas editor, an intelligent Binary Search file-size compressor, and an instant PDF Print Studio. 
 
 ## 🔥 God-Level Features
 
-### 📸 Smart Canvas & Editing
-* **Interactive Workspace:** Drag to move, grab corners to resize smoothly.
-* **Pro Retouching Engine:** Adjust Brightness, Contrast, Saturation, Skin Warmth (Temperature), Hue, Grayscale, Skin Softening (Blur), Sepia, and Premium Vignette.
-* **Smart Actions:** 1-Click Auto Adjust & API-integrated Background Removal.
-* **Biometric Face Guide:** An overlaid smart green grid ensures perfect facial symmetry and eye-level alignment (hidden automatically upon export).
+### 📸 Smart Canvas & Pro Editor
+* **God Mode Retouching:** Tweak Brightness, Contrast, Saturation, Skin Warmth, Hue, and Vignette right in the browser.
+* **Biometric Face Guide:** An overlaid smart green grid ensures perfect facial symmetry and eye-level alignment (auto-hides on export).
+* **Smart Actions:** 1-Click Auto Adjust & seamless `Remove.bg` API integration for flawless background removal.
 
-### 📏 Dimensions & Structure
-* **Standard Presets:** Indian Passport (3.5x4.5 cm), US Visa (2x2 inch), PAN Card, Stamp Size, and Driving License.
-* **Custom Control:** Define custom dimensions in px, cm, or inches.
-* **Professional Touch:** Add customizable cutting borders and auto-generated Name & Date strips directly on the photo.
+### 📏 Auto-Structuring
+* **Standard & Custom Presets:** Indian Passport (3.5x4.5 cm), US Visa (2x2 inch), PAN Card, Stamp Size, and Driving License.
+* **Automated Data Strips:** Auto-generate Name & Date strips directly on the photo.
+* **Smart Bounds:** Adjustable cutting borders and infinite drag/resize functionality.
 
-### 💾 Advanced Export & Compression
-* **Binary Search KB Compressor:** Enter your target file size (e.g., 50KB), and the algorithm automatically fine-tunes image quality and resolution to match it perfectly without losing critical details.
-* **Format Control:** Export in high-quality JPG or PNG.
+### 💾 Intelligent Export Engine
+* **Binary Search KB Compressor:** Enter your exact target file size (e.g., `50KB`). The algorithm instantly fine-tunes image quality and resolution to match it perfectly without losing critical details!
+* **Format Control:** Lossless PNG or optimized JPG exports.
 
-### 🖨️ Print Studio
-* **PDF Layout Generator:** Auto-arranges multiple copies on A4 or 4x6 Postcard sheets.
-* **Smart Spacing:** Optimal gap and margin calculations to fit maximum photos (e.g., 5 per row).
+### 🖨️ Pro Print Studio
+* **PDF Layout Generator:** Automatically arranges multiple copies on `A4` or `4x6 Postcard` sheets.
 * **Crop Marks (Cut Lines):** Automatically draws faint cut-lines between photos for easy scissor cutting.
 
-## 🛠️ Tech Stack
-* **HTML5 & CSS3:** Fully responsive, modern UI with Light/Dark theme toggles.
-* **Vanilla JavaScript (ES6+):** Robust state management and HTML5 Canvas manipulation.
-* **jsPDF:** Client-side PDF generation for the Print Studio.
-* **Remove.bg API:** High-fidelity background cutout integration.
+<br>
 
-## 🚀 How to Use Locally
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/YourUsername/PixelPass-God-Mode.git](https://github.com/YourUsername/PixelPass-God-Mode.git)
+## ⚙️ Quick Start (Local Setup)
+
+Want to run this beast locally? It takes less than 10 seconds.
+
+```bash
+# 1. Clone the repository
+git clone [https://github.com/YourUsername/PixelPass.git](https://github.com/YourUsername/PixelPass.git)
+
+# 2. Navigate to the directory
+cd PixelPass
+
+# 3. Open index.html in your favorite browser!
