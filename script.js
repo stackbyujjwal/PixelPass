@@ -1147,13 +1147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     desktopTabs.forEach(tab => tab.addEventListener('click', () => switchTab(parseInt(tab.dataset.index))));
     mobileTabs.forEach(tab => tab.addEventListener('click', () => switchTab(parseInt(tab.dataset.index))));
 
-    panelsContainer.addEventListener('scroll', () => {
-        if(window.innerWidth <= 900) {
-            let index = Math.round(panelsContainer.scrollLeft / window.innerWidth);
-            mobileTabs.forEach((t, i) => t.classList.toggle('active', i === index));
-            desktopTabs.forEach((t, i) => t.classList.toggle('active', i === index));
-        }
-    });
+    // Desktop/Resize events
     if(window.innerWidth > 900) switchTab(0);
     window.addEventListener('resize', () => {
         if(window.innerWidth > 900) {
