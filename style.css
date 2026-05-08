@@ -193,8 +193,14 @@ body[data-theme="dark"] .pro-toggle { background: #4b5563; }
     .panel-card { position: static; min-width: 100vw; height: 100%; display: flex !important; scroll-snap-align: start; }
     .panel-header { padding: 12px 20px; font-size: 14px; }
     
-    /* ADDED EXTRA PADDING HERE SO BOTTOM ITEMS DON'T HIDE */
-    .panel-content { padding: 15px 20px 120px 20px; }
+    /* BULLETPROOF FIX FOR SCROLLING */
+    .panel-content { padding: 15px 20px 20px 20px; }
+    .panel-content::after {
+        content: '';
+        display: block;
+        height: 100px; /* Ye invisible box hamesha end me extra scroll space dega */
+        width: 100%;
+    }
     
     .mobile-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 50; padding: 0 5px; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 10px rgba(0,0,0,0.05); overflow-x: auto;}
     .mobile-bottom-nav::-webkit-scrollbar { display: none; }
