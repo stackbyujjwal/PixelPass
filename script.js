@@ -372,7 +372,6 @@ inputsToWatch.forEach(el => {
         el.addEventListener('change', () => { isFastModeActive = false; scheduleRender(); });
     } else {
         el.addEventListener('input', () => { 
-            // Agar color badla jaye, toh transparency off kar do taaki rang dikhe
             if (el.id === 'bgColor') transparentBgToggle.checked = false;
             
             isFastModeActive = true; 
@@ -1004,7 +1003,7 @@ removeBGBtn.addEventListener('click', async () => {
         const blob = await new Promise(resolve => tempCanvas.toBlob(resolve, 'image/png'));
         const formData = new FormData();
         formData.append('size', 'auto'); 
-        formData.append('crop', 'false'); // Prevents API crop, keeps resolution/scale relative layout intact
+        formData.append('crop', 'false'); 
         formData.append('image_file', blob);
 
         const response = await fetch('https://api.remove.bg/v1.0/removebg', {
@@ -1023,23 +1022,38 @@ removeBGBtn.addEventListener('click', async () => {
 
         const newImg = new Image();
         newImg.onload = () => {
-            const oldW = loadedImg.width;
-            loadedImg = newImg; 
-            
-            // Adjust ratio automatically to prevent 'zoom out' effect of API quality drop
-            let ratio = newImg.width / oldW;
-            scale = scale / ratio;
-            
-            transparentBgToggle.checked = true;
-            imgFormat.value = 'image/png'; 
-            
-            isFastModeActive = false;
-            scheduleRender(); // Notice: NO resetLayout() here, so your image stays exact where it was!
-            showToast("Background Removed Successfully!", "check-circle");
-            
-            removeBGBtn.innerHTML = originalContent;
-            removeBGBtn.style.pointerEvents = 'auto';
-            removeBGBtn.style.opacity = '1';
+            // --- HIGH QUALITY MASKING TRICK STARTS HERE ---
+            // Hum yahan original high-res image ke size ka ek mask canvas banayenge
+            const maskCanvas = document.createElement('canvas');
+            maskCanvas.width = loadedImg.width;
+            maskCanvas.height = loadedImg.height;
+            const mCtx = maskCanvas.getContext('2d');
+
+            // 1. Pehle humari original high-quality image draw karenge
+            mCtx.drawImage(loadedImg, 0, 0, loadedImg.width, loadedImg.height);
+
+            // 2. Remove.bg se aayi hui smaller image ko as a "Mask" (destination-in) apply karenge
+            // Isse original image ka sirf wahi hissa dikhega jahan API ne subject ko detect kiya hai
+            mCtx.globalCompositeOperation = 'destination-in';
+            mCtx.drawImage(newImg, 0, 0, loadedImg.width, loadedImg.height);
+
+            // 3. Ab is nayi high-quality masked image ko save karke canvas me daal denge
+            const finalImg = new Image();
+            finalImg.onload = () => {
+                loadedImg = finalImg; 
+                
+                transparentBgToggle.checked = true;
+                imgFormat.value = 'image/png'; 
+                
+                isFastModeActive = false;
+                scheduleRender(); // Layout or scale change nahi hoga
+                showToast("Background Removed Successfully!", "check-circle");
+                
+                removeBGBtn.innerHTML = originalContent;
+                removeBGBtn.style.pointerEvents = 'auto';
+                removeBGBtn.style.opacity = '1';
+            };
+            finalImg.src = maskCanvas.toDataURL('image/png');
         };
         newImg.src = objectURL;
 
